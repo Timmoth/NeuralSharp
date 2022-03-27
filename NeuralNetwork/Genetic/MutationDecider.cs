@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork.Genetic;
 
-public class MutationDecider : IMutationDecider
+public sealed class MutationDecider : IMutationDecider
 {
     private readonly float _mutationRate;
 

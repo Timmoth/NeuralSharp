@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork.Genetic;
 
-public class FloatMutator : IFloatMutator
+public sealed class FloatMutator : IFloatMutator
 {
     private readonly float _minMutation;
     private readonly float _mutationRange;

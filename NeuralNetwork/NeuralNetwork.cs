@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace NeuralNetwork;
 
-public class NeuralNetwork
+public sealed class NeuralNetwork
 {
     #region Properties
 

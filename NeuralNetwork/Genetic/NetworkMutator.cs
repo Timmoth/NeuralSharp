@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork.Genetic;
 
-public class NetworkMutator : INetworkMutator
+public sealed class NetworkMutator : INetworkMutator
 {
     #region Construction
 
