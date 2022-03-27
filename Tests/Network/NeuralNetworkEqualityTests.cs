@@ -1,5 +1,4 @@
 ﻿using Moq;
-using NeuralNetwork.Activation;
 using NeuralNetwork.Generators;
 using Xunit;
 
@@ -17,13 +16,13 @@ public class NeuralNetworkEqualityTests
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
         var nA = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             0);
-        var nB = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 
+        var nB = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             0);
         var nC = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             1);
-        var nD = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 
+        var nD = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             1);
-        var nE = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,  1,
+        var nE = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
             1);
         var nF = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
             1);

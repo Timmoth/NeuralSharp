@@ -14,6 +14,17 @@ public sealed class Layer : IEquatable<Layer>
 
     #endregion
 
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder();
+        for (var i = 0; i < Neurons.Length; i++)
+        {
+            stringBuilder.Append($"n{i}[{Neurons[i]}], ");
+        }
+
+        return stringBuilder.ToString();
+    }
+
     #region Construction
 
     public Layer(Neuron[] neurons)
@@ -101,17 +112,6 @@ public sealed class Layer : IEquatable<Layer>
     }
 
     #endregion
-
-    public override string ToString()
-    {
-        var stringBuilder = new StringBuilder();
-        for (var i = 0; i < Neurons.Length; i++)
-        {
-            stringBuilder.Append($"n{i}[{Neurons[i]}], ");
-        }
-
-        return stringBuilder.ToString();
-    }
 
     #region Equality
 

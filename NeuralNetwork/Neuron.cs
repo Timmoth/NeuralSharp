@@ -13,6 +13,8 @@ public sealed class Neuron : IEquatable<Neuron>
         Activation = 0.0f;
     }
 
+    public NeuronData Data => new(Bias, Out.Select(c => c.Weight).ToList());
+
     public override string ToString()
     {
         return $"a{Activation:0.00} b{Bias:0.00}";
@@ -29,7 +31,6 @@ public sealed class Neuron : IEquatable<Neuron>
             connection.Weight -= error * connection.From.Activation * learningRate;
         }
     }
-    public NeuronData Data => new(Bias, Out.Select(c => c.Weight).ToList());
 
     #region Properties
 

@@ -1,10 +1,11 @@
 ﻿using NeuralNetwork.Activation;
 using NeuralNetwork.Generators;
 using NeuralNetwork.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace NeuralNetwork;
 
-public sealed class NeuralNetwork
+public class NeuralNetwork
 {
     #region Properties
 
@@ -13,9 +14,11 @@ public sealed class NeuralNetwork
 
     #endregion
 
+    #region Construction
+
     /// <summary>
-    /// Create and connect each layer & neuron
-    /// Given random weights & bias'
+    ///     Create and connect each layer & neuron
+    ///     Given random weights & bias'
     /// </summary>
     /// <param name="weightGenerator"></param>
     /// <param name="biasGenerator"></param>
@@ -40,7 +43,7 @@ public sealed class NeuralNetwork
     }
 
     /// <summary>
-    /// Create a neural network from the given network configuration 
+    ///     Create a neural network from the given network configuration
     /// </summary>
     /// <param name="activationFunction"></param>
     /// <param name="networkConfig"></param>
@@ -50,7 +53,7 @@ public sealed class NeuralNetwork
         for (var i = 0; i < Layers.Length; i++)
         {
             var layerData = networkConfig.Layers[i];
-            
+
             //Create the layer from the layer data
             Layers[i] = Layer.Create(layerData);
             if (i > 0)
@@ -62,8 +65,17 @@ public sealed class NeuralNetwork
         }
     }
 
+    public static NeuralNetwork From(object o)
+    {
+        return new NeuralNetwork(JObject.FromObject(o).ToObject<NetworkConfig>());
+    }
+
+    #endregion
+
+    #region Learning
+
     /// <summary>
-    /// Feed the inputs into the network 
+    ///     Feed the inputs into the network
     /// </summary>
     /// <param name="activationFunction"></param>
     /// <param name="inputs"></param>
@@ -84,7 +96,7 @@ public sealed class NeuralNetwork
     }
 
     /// <summary>
-    /// Train the network
+    ///     Train the network
     /// </summary>
     /// <param name="activationFunction"></param>
     /// <param name="inputs"></param>
@@ -141,6 +153,8 @@ public sealed class NeuralNetwork
 
         return output;
     }
+
+    #endregion
 
     #region Equality
 

@@ -17,7 +17,7 @@ public static class Helpers
         var outputBuilder = new StringBuilder();
         outputBuilder.Append("Expected: \t'").Append(expectedOutput).AppendLine("' ");
         outputBuilder.Append("Actual: \t'").Append(actualOutput).AppendLine("' ");
-        outputBuilder.AppendLine($"Pass: \t'{ expected.SequenceEqual(actual, new FloatOutputComparer())}' ");
+        outputBuilder.AppendLine($"Pass: \t'{expected.SequenceEqual(actual, new FloatOutputComparer())}' ");
         outputBuilder.AppendLine("----------------------------------------");
         Console.WriteLine(outputBuilder.ToString());
     }

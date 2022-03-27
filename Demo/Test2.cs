@@ -18,7 +18,7 @@ public class Test2
         for (var i = 0; i < 100; i++)
         {
             var a = rand.Next(0, 100) / 100.0f;
-            values.Add((new[] { a, }, new[] { (float)Math.Sin(a) }));
+            values.Add((new[] { a }, new[] { (float)Math.Sin(a) }));
         }
 
         for (var i = 0; i < 10; i++)

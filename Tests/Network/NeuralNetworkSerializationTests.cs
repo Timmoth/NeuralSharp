@@ -1,6 +1,5 @@
 ﻿using System;
 using Moq;
-using NeuralNetwork.Activation;
 using NeuralNetwork.Generators;
 using NeuralNetwork.Serialization;
 using Newtonsoft.Json;
