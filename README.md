@@ -1,4 +1,6 @@
-C# DotNet Neural Network & Genetic Algorithm
+# NeuralSharp
+
+C# dotnet Neural Network & Genetic Algorithm implementation
 
 [![tests](https://github.com/Timmoth/NeuralSharp/actions/workflows/test.yml/badge.svg)](https://github.com/Timmoth/NeuralSharp/actions/workflows/test.yml)
 [![code metrics](https://github.com/Timmoth/NeuralSharp/actions/workflows/metrics.yml/badge.svg)](https://github.com/Timmoth/NeuralSharp/blob/main/CODE_METRICS.md)
