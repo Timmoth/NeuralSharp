@@ -1,7 +1,7 @@
-﻿using NeuralNetwork.Helpers;
-using NeuralNetwork.Serialization;
+﻿using NeuralSharp.Helpers;
+using NeuralSharp.Serialization;
 
-namespace NeuralNetwork;
+namespace NeuralSharp;
 
 public sealed class Neuron : IEquatable<Neuron>
 {

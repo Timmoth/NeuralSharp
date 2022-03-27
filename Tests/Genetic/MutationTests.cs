@@ -1,5 +1,6 @@
 ﻿using Moq;
-using NeuralNetwork.Genetic;
+using NeuralSharp;
+using NeuralSharp.Genetic;
 using Xunit;
 
 namespace Tests.Genetic;
@@ -10,7 +11,7 @@ public class MutationTests
     public void NetworkMutator2n1nTest()
     {
         //Arrange
-        var network = NeuralNetwork.NeuralNetwork.From(new
+        var network = NeuralNetwork.From(new
         {
             Layers = new[]
             {
@@ -44,7 +45,7 @@ public class MutationTests
             }
         });
 
-        var fitnessFunction = (NeuralNetwork.NeuralNetwork n) => 0.1f;
+        var fitnessFunction = (NeuralNetwork n) => 0.1f;
         var mockMutationDecider = new Mock<IMutationDecider>();
         mockMutationDecider
             .Setup(m => m.ShouldMutate(It.IsAny<float>()))
@@ -61,7 +62,7 @@ public class MutationTests
         var mutatedNetwork = mutation.Mutate(network);
 
         //Assert
-        var expectedNetwork = NeuralNetwork.NeuralNetwork.From(new
+        var expectedNetwork = NeuralNetwork.From(new
         {
             Layers = new[]
             {

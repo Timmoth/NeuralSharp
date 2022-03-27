@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\NeuralNetwork\NeuralNetwork.csproj" />
+		<ProjectReference Include="..\NeuralNetwork\NeuralSharp.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork;
+﻿namespace NeuralSharp;
 
 public sealed class Connection
 {

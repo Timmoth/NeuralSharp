@@ -1,5 +1,5 @@
 using Moq;
-using NeuralNetwork.Generators;
+using NeuralSharp.Generators;
 using Xunit;
 
 namespace Tests.Network.Layer;
@@ -15,17 +15,17 @@ public class LayerEqualityTests
         var mockBiasGenerator = new Mock<IBiasGenerator>();
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
 
-        var outLayer = NeuralNetwork.Layer.Create(mockBiasGenerator.Object, 1);
+        var outLayer = NeuralSharp.Layer.Create(mockBiasGenerator.Object, 1);
 
-        var l1 = NeuralNetwork.Layer.Create(mockBiasGenerator.Object, 1);
+        var l1 = NeuralSharp.Layer.Create(mockBiasGenerator.Object, 1);
         l1.Connect(mockWeightGenerator.Object, outLayer);
 
-        var l2 = NeuralNetwork.Layer.Create(mockBiasGenerator.Object, 1);
+        var l2 = NeuralSharp.Layer.Create(mockBiasGenerator.Object, 1);
         l2.Connect(mockWeightGenerator.Object, outLayer);
 
-        var l3 = NeuralNetwork.Layer.Create(mockBiasGenerator.Object, 1);
+        var l3 = NeuralSharp.Layer.Create(mockBiasGenerator.Object, 1);
 
-        var l4 = NeuralNetwork.Layer.Create(mockBiasGenerator.Object, 1);
+        var l4 = NeuralSharp.Layer.Create(mockBiasGenerator.Object, 1);
         mockWeightGenerator.Setup(i => i.Generate()).Returns(2);
         l4.Connect(mockWeightGenerator.Object, outLayer);
 

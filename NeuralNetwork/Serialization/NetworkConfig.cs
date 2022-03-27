@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Serialization;
+﻿namespace NeuralSharp.Serialization;
 
 public sealed record NetworkConfig(List<LayerConfig> Layers)
 {

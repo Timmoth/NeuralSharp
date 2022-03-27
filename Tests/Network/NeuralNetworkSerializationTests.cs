@@ -1,7 +1,8 @@
 ﻿using System;
 using Moq;
-using NeuralNetwork.Generators;
-using NeuralNetwork.Serialization;
+using NeuralSharp;
+using NeuralSharp.Generators;
+using NeuralSharp.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -20,7 +21,7 @@ public class NeuralNetworkSerializationTests
         var mockBiasGenerator = new Mock<IBiasGenerator>();
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
         var network =
-            new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1);
+            new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1);
 
         //Act
         var networkData = NetworkConfig.From(network);
@@ -57,7 +58,7 @@ public class NeuralNetworkSerializationTests
         var mockBiasGenerator = new Mock<IBiasGenerator>();
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
         var network =
-            new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 2, 2);
+            new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 2, 2);
 
         //Act
         var networkData = NetworkConfig.From(network);
@@ -116,7 +117,7 @@ public class NeuralNetworkSerializationTests
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
 
         var network =
-            new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 2, 2);
+            new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 2, 2);
 
         //Act
         var networkData = NetworkConfig.From(network);

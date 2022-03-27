@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Activation;
+﻿namespace NeuralSharp.Activation;
 
 public sealed class Relu : IActivationFunction
 {

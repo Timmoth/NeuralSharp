@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Generators;
+﻿namespace NeuralSharp.Generators;
 
 public interface IBiasGenerator
 {

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using Moq;
-using NeuralNetwork.Activation;
-using NeuralNetwork.Serialization;
+using NeuralSharp;
+using NeuralSharp.Activation;
+using NeuralSharp.Serialization;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -34,7 +35,7 @@ public class NeuralNetworkBackPropagateTests
         var mockActivator = new Mock<IActivationFunction>();
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 0.5f);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
 
         var input = new[] { 0.1f };
         var expected = new[] { 0.1f };
@@ -88,7 +89,7 @@ public class NeuralNetworkBackPropagateTests
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 2);
         mockActivator.Setup(i => i.Derivative(It.IsAny<float>())).Returns<float>(x => x * 2);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
         var input = new[] { 0.1f, 0.8f };
         var expected = new[] { 0.5f };
 
@@ -170,7 +171,7 @@ public class NeuralNetworkBackPropagateTests
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 2);
         mockActivator.Setup(i => i.Derivative(It.IsAny<float>())).Returns<float>(x => x * 2);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
         var input = new[] { 0.1f, 0.8f };
         var expected = new[] { 0.45f, 0.82f };
 

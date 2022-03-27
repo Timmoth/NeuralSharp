@@ -1,5 +1,6 @@
 ﻿using Moq;
-using NeuralNetwork.Generators;
+using NeuralSharp;
+using NeuralSharp.Generators;
 using Xunit;
 
 namespace Tests.Network;
@@ -14,17 +15,17 @@ public class NeuralNetworkEqualityTests
         mockWeightGenerator.Setup(i => i.Generate()).Returns(1);
         var mockBiasGenerator = new Mock<IBiasGenerator>();
         mockBiasGenerator.Setup(i => i.Generate()).Returns(1);
-        var nA = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
+        var nA = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             0);
-        var nB = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
+        var nB = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             0);
-        var nC = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
+        var nC = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             1);
-        var nD = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
+        var nD = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object,
             1);
-        var nE = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
+        var nE = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
             1);
-        var nF = new NeuralNetwork.NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
+        var nF = new NeuralNetwork(mockWeightGenerator.Object, mockBiasGenerator.Object, 1,
             1);
 
         //Act

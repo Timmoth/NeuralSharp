@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Helpers;
+﻿namespace NeuralSharp.Helpers;
 
 public static class Constants
 {

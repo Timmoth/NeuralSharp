@@ -1,9 +1,9 @@
-﻿using NeuralNetwork.Activation;
-using NeuralNetwork.Generators;
-using NeuralNetwork.Serialization;
+﻿using NeuralSharp.Activation;
+using NeuralSharp.Generators;
+using NeuralSharp.Serialization;
 using Newtonsoft.Json.Linq;
 
-namespace NeuralNetwork;
+namespace NeuralSharp;
 
 public sealed class NeuralNetwork
 {

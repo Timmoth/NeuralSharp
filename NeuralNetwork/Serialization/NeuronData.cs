@@ -1,6 +1,6 @@
-﻿using NeuralNetwork.Helpers;
+﻿using NeuralSharp.Helpers;
 
-namespace NeuralNetwork.Serialization;
+namespace NeuralSharp.Serialization;
 
 public sealed record NeuronData(float Bias, List<float> Weights)
 {

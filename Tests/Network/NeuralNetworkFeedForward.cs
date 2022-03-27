@@ -1,6 +1,7 @@
 using Moq;
-using NeuralNetwork.Activation;
-using NeuralNetwork.Serialization;
+using NeuralSharp;
+using NeuralSharp.Activation;
+using NeuralSharp.Serialization;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -33,7 +34,7 @@ public class NeuralNetworkFeedForward
         var mockActivator = new Mock<IActivationFunction>();
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 0.5f);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
 
         var input = new[] { 0.1f };
 
@@ -85,7 +86,7 @@ public class NeuralNetworkFeedForward
         var mockActivator = new Mock<IActivationFunction>();
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 2);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
         var input = new[] { 0.1f, 0.8f };
         //Act
         var actualOutput = network.FeedForward(mockActivator.Object, input);
@@ -161,7 +162,7 @@ public class NeuralNetworkFeedForward
         var mockActivator = new Mock<IActivationFunction>();
         mockActivator.Setup(i => i.Activate(It.IsAny<float>())).Returns<float>(x => x / 2);
 
-        var network = new NeuralNetwork.NeuralNetwork(networkData);
+        var network = new NeuralNetwork(networkData);
         var input = new[] { 0.1f, 0.8f };
         //Act
         var actualOutput = network.FeedForward(mockActivator.Object, input);

@@ -1,5 +1,6 @@
-﻿using NeuralNetwork.Activation;
-using NeuralNetwork.Generators;
+﻿using NeuralSharp;
+using NeuralSharp.Activation;
+using NeuralSharp.Generators;
 
 namespace Demo;
 
@@ -9,7 +10,7 @@ public class Test2
     {
         var activationFunction = new Tanh();
         var neuralNetwork1 =
-            new NeuralNetwork.NeuralNetwork(new WeightGenerator(),
+            new NeuralNetwork(new WeightGenerator(),
                 new BiasGenerator(),
                 1, 16, 1);
 

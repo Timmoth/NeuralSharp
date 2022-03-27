@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork.Genetic;
+﻿namespace NeuralSharp.Genetic;
 
 public interface IMutationDecider
 {

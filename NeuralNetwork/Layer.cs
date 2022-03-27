@@ -1,10 +1,10 @@
 ﻿using System.Text;
-using NeuralNetwork.Activation;
-using NeuralNetwork.Generators;
-using NeuralNetwork.Helpers;
-using NeuralNetwork.Serialization;
+using NeuralSharp.Activation;
+using NeuralSharp.Generators;
+using NeuralSharp.Helpers;
+using NeuralSharp.Serialization;
 
-namespace NeuralNetwork;
+namespace NeuralSharp;
 
 public sealed class Layer : IEquatable<Layer>
 {
