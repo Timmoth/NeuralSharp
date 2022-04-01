@@ -24,8 +24,12 @@ app.Configure(config =>
     config.AddCommand<Test1Command>("test1")
         .WithDescription("Run Test 1");
 
-    config.AddCommand<Test1Command>("test2")
+    config.AddCommand<Test2Command>("test2")
         .WithDescription("Run Test 2");
+
+    config.AddCommand<Test3Command>("test3")
+        .WithDescription("Run Test 3");
+
 
 #if DEBUG
     config.PropagateExceptions();

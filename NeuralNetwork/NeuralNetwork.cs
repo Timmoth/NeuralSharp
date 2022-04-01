@@ -83,7 +83,7 @@ public sealed class NeuralNetwork
     public float[] FeedForward(IActivationFunction activationFunction, float[] inputs)
     {
         //Activate input layer
-        Layers[0].Activate(inputs);
+        Layers[0].Activate(activationFunction, inputs);
 
         //Activate each layer of the network
         for (var i = 1; i < Layers.Length; i++)

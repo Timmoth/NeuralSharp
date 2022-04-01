@@ -94,11 +94,11 @@ public sealed class Layer : IEquatable<Layer>
 
     #region Activation
 
-    public void Activate(float[] inputs)
+    public void Activate(IActivationFunction activation, float[] inputs)
     {
         for (var i = 0; i < inputs.Length; i++)
         {
-            Neurons[i].Activation = inputs[i];
+            Neurons[i].Activation = inputs[i]; //activation.Activate(inputs[i]);
         }
     }
 

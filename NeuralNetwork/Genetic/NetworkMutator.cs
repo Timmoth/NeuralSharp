@@ -1,4 +1,38 @@
-﻿namespace NeuralSharp.Genetic;
+﻿using NeuralSharp.Serialization;
+
+namespace NeuralSharp.Genetic;
+
+public static class NetworkCrossover
+{
+    public static NetworkConfig CrossOver(this NetworkConfig ac, NetworkConfig bc)
+    {
+        var m = new MutationDecider(0.5f);
+
+        var layers = new List<LayerConfig>();
+        for (var i = 0; i < ac.Layers.Count; i++)
+        {
+            var alayerConfig = ac.Layers[i];
+            var blayerConfig = bc.Layers[i];
+
+            var neurons = new List<NeuronData>();
+            for (var j = 0; j < alayerConfig.Neurons.Count; j++)
+            {
+                if (m.ShouldMutate(0.5f))
+                {
+                    neurons.Add(alayerConfig.Neurons[j]);
+                }
+                else
+                {
+                    neurons.Add(blayerConfig.Neurons[j]);
+                }
+            }
+
+            layers.Add(new LayerConfig(neurons));
+        }
+
+        return new NetworkConfig(layers);
+    }
+}
 
 public sealed class NetworkMutator : INetworkMutator
 {
@@ -31,6 +65,16 @@ public sealed class NetworkMutator : INetworkMutator
         }
 
         return network;
+    }
+
+    public NetworkConfig Mutate(NetworkConfig network)
+    {
+        var layers = network.Layers
+            .Select(layer => layer.Neurons
+                .Select(neuron => new NeuronData(Mutate(neuron.Bias), neuron.Weights.Select(Mutate).ToList())).ToList())
+            .Select(neurons => new LayerConfig(neurons)).ToList();
+
+        return new NetworkConfig(layers);
     }
 
     public NeuralNetwork Mutate(NeuralNetwork[] networks)

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ApplicationIcon>Logo.ico</ApplicationIcon>
+		<AssemblyName>Aptacode.AppFramework.Demo</AssemblyName>
+		<RootNamespace>Aptacode.AppFramework.Demo</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aptacode.AppFramework" Version="1.0.38" />
+		<PackageReference Include="Aptacode.BlazorCanvas" Version="1.0.14" />
+		<PackageReference Include="Aptacode.Geometry" Version="1.0.51" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.3" PrivateAssets="all" />
+		<PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\NeuralNetwork\NeuralSharp.csproj" />
+		<ProjectReference Include="..\Snake\Snake.csproj" />
+	</ItemGroup>
+
+</Project>
