@@ -22,12 +22,12 @@
 	<ItemGroup>
 		<PackageReference Include="Aptacode.AppFramework" Version="1.0.43" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Spectre.Console" Version="0.44.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\NeuralNetwork\NeuralSharp.csproj" />
-		<ProjectReference Include="..\Snake\Snake.csproj" />
 	</ItemGroup>
 
 </Project>

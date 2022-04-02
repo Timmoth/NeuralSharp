@@ -38,11 +38,10 @@ public sealed class NetworkMutator : INetworkMutator
 {
     #region Construction
 
-    public NetworkMutator(Func<NeuralNetwork, float> fitnessFunction,
+    public NetworkMutator(
         IMutationDecider mutationDecider,
         IFloatMutator floatMutator)
     {
-        _fitnessFunction = fitnessFunction;
         _mutationDecider = mutationDecider;
         _floatMutator = floatMutator;
     }
@@ -77,13 +76,6 @@ public sealed class NetworkMutator : INetworkMutator
         return new NetworkConfig(layers);
     }
 
-    public NeuralNetwork Mutate(NeuralNetwork[] networks)
-    {
-        var fittest = networks.OrderByDescending(m => _fitnessFunction(m)).First();
-        Mutate(fittest);
-        return fittest;
-    }
-
     private float Mutate(float value)
     {
         return !_mutationDecider.ShouldMutate(value) ? value : _floatMutator.Mutate(value);
@@ -91,7 +83,6 @@ public sealed class NetworkMutator : INetworkMutator
 
     #region Properties
 
-    private readonly Func<NeuralNetwork, float> _fitnessFunction;
     private readonly IMutationDecider _mutationDecider;
     private readonly IFloatMutator _floatMutator;
 

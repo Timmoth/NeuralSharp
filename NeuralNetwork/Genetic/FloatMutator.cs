@@ -2,13 +2,6 @@
 
 public sealed class FloatMutator : IFloatMutator
 {
-    private readonly float _mutationRange;
-
-    public FloatMutator(float mutationRange)
-    {
-        _mutationRange = mutationRange;
-    }
-
     public float Mutate(float v)
     {
         return v + Gauss();

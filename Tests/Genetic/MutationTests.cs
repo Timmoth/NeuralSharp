@@ -56,7 +56,7 @@ public class MutationTests
             .Setup(m => m.Mutate(It.IsAny<float>()))
             .Returns<float>(f => f + 0.1f);
 
-        var mutation = new NetworkMutator(fitnessFunction, mockMutationDecider.Object, mockMutator.Object);
+        var mutation = new NetworkMutator(mockMutationDecider.Object, mockMutator.Object);
 
         //Act
         var mutatedNetwork = mutation.Mutate(network);
