@@ -28,15 +28,20 @@ internal sealed class
     private readonly INetworkMutator _mutation;
     private readonly IWeightGenerator _weightGenerator;
 
+    private readonly int GenerationCount = 5000; //How many generations to run
+    private readonly int MutationCount = 400; //How many times should one network be mutated in a single run
+    private readonly int OffspringCount = 10; //How many offspring to produce per generation
+    private readonly int SuccessfulMutationCount = 10; //How many successful mutations should be selected per generation
+
     public Test3Command(IWeightGenerator weightGenerator, IBiasGenerator biasGenerator,
         IActivationFunction activationFunction)
     {
         _weightGenerator = weightGenerator;
         _biasGenerator = biasGenerator;
         _activationFunction = activationFunction;
-        _mutation = new NetworkMutator(n => 0.1f, new MutationDecider(0.02f), new FloatMutator(0.5f));
+        _mutation = new NetworkMutator(n => 0.1f, new MutationDecider(0.01f), new FloatMutator(0.5f));
     }
-    
+
     public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
     {
         Console.WriteLine("#####################################");
@@ -125,17 +130,12 @@ internal sealed class
         return behaviour.Result;
     }
 
-    private readonly int GenerationCount = 300;//How many generations to run
-    private readonly int MutationCount = 200;//How many times should one network be mutated in a single run
-    private readonly int SuccessfulMutationCount = 5;//How many successful mutations should be selected per generation
-    private readonly int OffspringCount = 5;//How many offspring to produce per generation
-
     public async Task<List<(NetworkConfig, SnakeGameResult)>> RunMutation(NetworkConfig network)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        var networks = new List<NetworkConfig>()
+        var networks = new List<NetworkConfig>
         {
             network
         };
@@ -150,7 +150,7 @@ internal sealed class
         {
             var totalMovement = 0;
             var totalScore = 0;
-            var iterations = 2;
+            var iterations = 10;
             var selectedNetwork = new NeuralNetwork(networkConfig);
             for (var j = 0; j < iterations; j++)
             {
@@ -158,6 +158,7 @@ internal sealed class
                 totalMovement += gameResult.Moves;
                 totalScore += gameResult.Score;
             }
+
             results.Add((networkConfig, new SnakeGameResult(totalScore / iterations, totalMovement / iterations)));
         }
 
@@ -169,19 +170,21 @@ internal sealed class
 
     public async Task<(NetworkConfig, SnakeGameResult)> RunAll()
     {
-        var networkConfig = JsonSerializer.Deserialize<NetworkConfig>(await File.ReadAllTextAsync("./network_output.json"));
+        var networkConfig =
+            JsonSerializer.Deserialize<NetworkConfig>(await File.ReadAllTextAsync("./network_output.json"));
         //var networkConfig = NetworkConfig.From(new NeuralNetwork(_weightGenerator, _biasGenerator, 24, 32, 32, 4));
         var bestRun = (networkConfig, new SnakeGameResult(0, 0));
 
-        var results = new List<(NetworkConfig, SnakeGameResult)>()
+        var results = new List<(NetworkConfig, SnakeGameResult)>
         {
             bestRun
         };
 
         for (var j = 0; j < GenerationCount; j++)
         {
-            var tasks = results.Select((r) => Task.Run(() => RunMutation(r.Item1)));
-            Console.WriteLine($"Generation {j} starting. Running {tasks.Count() * MutationCount} games over {tasks.Count()} tasks");
+            var tasks = results.Select(r => Task.Run(() => RunMutation(r.Item1)));
+            Console.WriteLine(
+                $"Generation {j} starting. Running {tasks.Count() * MutationCount} games over {tasks.Count()} tasks");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
