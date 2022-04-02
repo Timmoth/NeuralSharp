@@ -3,12 +3,14 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ApplicationIcon>Logo.ico</ApplicationIcon>
-		<AssemblyName>Aptacode.AppFramework.Demo</AssemblyName>
-		<RootNamespace>Aptacode.AppFramework.Demo</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aptacode.AppFramework" Version="1.0.39" />
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aptacode.AppFramework" Version="1.0.43" />
 		<PackageReference Include="Aptacode.BlazorCanvas" Version="1.0.14" />
 		<PackageReference Include="Aptacode.Geometry" Version="1.0.51" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />

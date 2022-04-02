@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Numerics;
 using System.Threading.Tasks;
+using Aptacode.AppFramework;
 using Aptacode.AppFramework.Components;
 using Aptacode.Geometry.Primitives;
 using Microsoft.AspNetCore.Components;
@@ -15,7 +16,7 @@ using Snake.Behaviours;
 using Snake.Components;
 using Snake.States;
 
-namespace Aptacode.AppFramework.Demo.Pages;
+namespace BlazorDemo.Pages;
 
 public class SnakeBase : ComponentBase
 {

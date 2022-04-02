@@ -1,13 +1,14 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Aptacode.AppFramework;
 using Aptacode.BlazorCanvas;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 
-namespace Aptacode.AppFramework.Demo;
+namespace BlazorDemo;
 
 public class Program
 {
