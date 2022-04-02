@@ -1,17 +1,19 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Aptacode.AppFramework;
 using Aptacode.AppFramework.Components;
-using Aptacode.AppFramework.Plugins.Behaviours;
-using Aptacode.AppFramework.Scene;
+using Aptacode.AppFramework.Plugins;
 using Aptacode.Geometry.Primitives;
 using NeuralSharp;
 using NeuralSharp.Activation;
+using Snake;
+using Snake.Behaviours;
 using Snake.Components;
 using Snake.States;
 
-namespace Snake.Behaviours;
+namespace Demo.Commands;
 
-public sealed class SnakeBehaviour : BehaviourPlugin<float>
+public sealed class SnakeBehaviour : Plugin
 {
     public SnakeBehaviour(IActivationFunction activationFunction, NeuralNetwork network, Scene scene) :
         base(scene)

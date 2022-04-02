@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Numerics;
 using System.Text.Json;
+using Aptacode.AppFramework;
 using Aptacode.AppFramework.Components;
-using Aptacode.AppFramework.Scene;
 using Aptacode.Geometry.Primitives;
 using NeuralSharp;
 using NeuralSharp.Activation;
@@ -55,7 +55,10 @@ internal sealed class
 
     public Scene CreateGame(NeuralNetwork network)
     {
-        var scene = new Scene(SnakeGameConfig.BoardSize);
+        var scene = new Scene()
+        {
+            Size = SnakeGameConfig.BoardSize
+        };
 
         var snakeHead =
             new SnakeBodyComponent(Polygon.Rectangle.FromTwoPoints(SnakeGameConfig.CenterCell + new Vector2(2, 2),
@@ -74,14 +77,14 @@ internal sealed class
         scene.Add(snakeFood);
 
         var snakeDirection = new SnakeControlBehaviour(scene);
-        scene.Plugins.Ui.Add(snakeDirection);
+        scene.Plugins.Add(snakeDirection);
 
         var snakeBehavioru = new SnakeBehaviour(_activationFunction, network, scene)
         {
             SnakeHead = snakeHead,
             SnakeFood = snakeFood
         };
-        scene.Plugins.Tick.Add(snakeBehavioru);
+        scene.Plugins.Add(snakeBehavioru);
 
         var thickness = 10.0f;
         var bottom = Polygon.Create(thickness, thickness, SnakeGameConfig.BoardSize.X - thickness, thickness,
@@ -120,7 +123,7 @@ internal sealed class
     public SnakeGameResult Run(NeuralNetwork network)
     {
         var game = CreateGame(network);
-        var behaviour = game.Plugins.Tick.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
+        var behaviour = game.Plugins.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
         behaviour.EnableTimer = false;
         while (behaviour.Running)
         {

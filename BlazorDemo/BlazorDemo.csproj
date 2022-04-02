@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aptacode.AppFramework" Version="1.0.38" />
+		<PackageReference Include="Aptacode.AppFramework" Version="1.0.39" />
 		<PackageReference Include="Aptacode.BlazorCanvas" Version="1.0.14" />
 		<PackageReference Include="Aptacode.Geometry" Version="1.0.51" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />

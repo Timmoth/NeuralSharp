@@ -4,8 +4,6 @@ using System.Net.Http.Json;
 using System.Numerics;
 using System.Threading.Tasks;
 using Aptacode.AppFramework.Components;
-using Aptacode.AppFramework.Scene;
-using Aptacode.BlazorCanvas;
 using Aptacode.Geometry.Primitives;
 using Microsoft.AspNetCore.Components;
 using NeuralSharp;
@@ -21,14 +19,12 @@ namespace Aptacode.AppFramework.Demo.Pages;
 
 public class SnakeBase : ComponentBase
 {
-    [Inject] public BlazorCanvasInterop BlazorCanvas { get; set; }
     [Inject] public HttpClient Client { get; set; }
     [Inject] public IActivationFunction ActivationFunction { get; set; }
     [Inject] public IBiasGenerator BiasGenerator { get; set; }
     [Inject] public IWeightGenerator WeightGenerator { get; set; }
 
-    public Scene.Scene Scene { get; set; }
-    public SceneController SceneController { get; set; }
+    public Scene Scene { get; set; }
     public SnakeBehaviour SnakeGame { get; set; }
 
     public void CreateGame(NeuralNetwork network)
@@ -50,7 +46,7 @@ public class SnakeBase : ComponentBase
         Scene.Add(snakeFood);
 
         var snakeDirection = new SnakeControlBehaviour(Scene);
-        Scene.Plugins.Ui.Add(snakeDirection);
+        Scene.Plugins.Add(snakeDirection);
 
         SnakeGame = new SnakeBehaviour(ActivationFunction, network, Scene)
         {
@@ -58,7 +54,7 @@ public class SnakeBase : ComponentBase
             SnakeFood = snakeFood
         };
         SnakeGame.GameOver += GameOver;
-        Scene.Plugins.Tick.Add(SnakeGame);
+        Scene.Plugins.Add(SnakeGame);
 
         var thickness = 10.0f;
         var bottom = Polygon.Create(thickness, thickness, SnakeGameConfig.BoardSize.X - thickness, thickness,
@@ -99,8 +95,10 @@ public class SnakeBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Scene = new Scene.Scene(SnakeGameConfig.BoardSize);
-        SceneController = new SceneController(BlazorCanvas, Scene);
+        Scene = new Scene()
+        {
+            Size = SnakeGameConfig.BoardSize
+        };
 
         var networkConfig = await Client.GetFromJsonAsync<NetworkConfig>("network.json");
 

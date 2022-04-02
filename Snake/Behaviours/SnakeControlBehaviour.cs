@@ -1,11 +1,11 @@
-﻿using Aptacode.AppFramework.Plugins.Behaviours;
-using Aptacode.AppFramework.Scene;
-using Aptacode.AppFramework.Scene.Events;
+﻿using Aptacode.AppFramework;
+using Aptacode.AppFramework.Events;
+using Aptacode.AppFramework.Plugins;
 using Snake.States;
 
 namespace Snake.Behaviours;
 
-public class SnakeControlBehaviour : BehaviourPlugin<UiEvent>
+public class SnakeControlBehaviour : Plugin
 {
     public static string BehaviourName = "SnakeControl";
 
@@ -20,7 +20,7 @@ public class SnakeControlBehaviour : BehaviourPlugin<UiEvent>
             return false;
         }
 
-        var state = Scene.Plugins.Tick.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
+        var state = Scene.Plugins.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
         if (state == null)
         {
             return false;
