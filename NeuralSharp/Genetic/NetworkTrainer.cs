@@ -31,10 +31,10 @@ public sealed class NetworkTrainer
 
         for (var j = 0; j < trainingConfig.Generations; j++)
         {
-            var tasks = results.Select((r, i) => Task.Run(() => RunNetworkMutations(i, r.Item1, trainingConfig, executor)));
+            var tasks = results.Select((r, i) => Task.Run(() => RunNetworkMutations(j, i, r.Item1, trainingConfig, executor)));
 
             _logger.LogInformation(
-                "Generation {generation} starting. Running {mutations} mutations over {tasks} parallel tasks.", j,
+                "Starting generation {generation}. Running {mutations} mutations over {tasks} parallel tasks.", j,
                 tasks.Count() * trainingConfig.Mutations, tasks.Count());
 
             var stopwatch = new Stopwatch();
@@ -44,14 +44,12 @@ public sealed class NetworkTrainer
 
             stopwatch.Stop();
 
-            _logger.LogInformation("Generation {generation} complete in {duration}", j, stopwatch.Elapsed);
-
             results = tasks
                     .SelectMany(m => m.Result)
                 .OrderByDescending(r => r.Item2)
                 .Take(trainingConfig.Offspring).ToList();
 
-            _logger.LogInformation("Results '{results}'", string.Join(", ", results.Select(r => r.Item2)));
+            _logger.LogInformation("Completed generation {generation} in {duration}. Results '{results}'", j, stopwatch.Elapsed, string.Join(", ", results.Select(r => r.Item2)));
 
             bestNetwork = results.First();
 
@@ -62,14 +60,18 @@ public sealed class NetworkTrainer
             await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork.networkConfig));
         }
 
+        _logger.LogInformation("Finished training: {config}", trainingConfig);
+
         return bestNetwork;
     }
 
-    private async Task<List<(NeuralNetwork, float)>> RunNetworkMutations(int generationIndex,
+    private async Task<List<(NeuralNetwork, float)>> RunNetworkMutations(int generationIndex, int networkIndex,
         NeuralNetwork network,
         NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
+        _logger.LogTrace("{generationIndex},{mutationIndex} - Started ", generationIndex, networkIndex);
+
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -85,7 +87,7 @@ public sealed class NetworkTrainer
 
         stopwatch.Stop();
 
-        _logger.LogInformation("Generation {generationIndex} - {mutations} mutations in {elapsed}, best result '{bestResult}'", generationIndex, trainingConfig.Mutations, stopwatch.Elapsed, bestResult);
+        _logger.LogTrace("{generationIndex},{mutationIndex} - Completed in {elapsed}, best result: '{bestResult}'", generationIndex, networkIndex, stopwatch.Elapsed, bestResult);
 
         return results;
     }
