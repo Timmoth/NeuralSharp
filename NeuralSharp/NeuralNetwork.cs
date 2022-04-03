@@ -65,6 +65,11 @@ public sealed class NeuralNetwork
         }
     }
 
+    public NeuralNetwork(Layer[] layers)
+    {
+        Layers = layers;
+    }
+
     public static NeuralNetwork From(object o)
     {
         return new NeuralNetwork(JObject.FromObject(o).ToObject<NetworkConfig>());

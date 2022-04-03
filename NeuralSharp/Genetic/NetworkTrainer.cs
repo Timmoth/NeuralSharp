@@ -17,12 +17,12 @@ public sealed class NetworkTrainer
         _logger = logger;
     }
 
-    public async Task<(NetworkConfig, float)> Run(NetworkConfig networkConfig, NetworkTrainerConfig trainingConfig,
+    public async Task<(NeuralNetwork, float)> Run(NeuralNetwork networkConfig, NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
         var bestNetwork = (networkConfig, 0.0f);
 
-        var results = new List<(NetworkConfig, float)>
+        var results = new List<(NeuralNetwork, float)>
         {
             bestNetwork
         };
@@ -31,7 +31,7 @@ public sealed class NetworkTrainer
 
         for (var j = 0; j < trainingConfig.Generations; j++)
         {
-            var tasks = results.Select(r => Task.Run(() => RunNetworkMutations(r.Item1, trainingConfig, executor)));
+            var tasks = results.Select((r, i) => Task.Run(() => RunNetworkMutations(i, r.Item1, trainingConfig, executor)));
 
             _logger.LogInformation(
                 "Generation {generation} starting. Running {mutations} mutations over {tasks} parallel tasks.", j,
@@ -59,29 +59,33 @@ public sealed class NetworkTrainer
             var networks = results.Select(c => c.Item1).CrossOver(trainingConfig.Offspring);
             results.AddRange(networks.Select(n => (n, 0.0f)));
 
-            await _neuralNetworkIo.Save(bestNetwork.networkConfig);
+            await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork.networkConfig));
         }
 
         return bestNetwork;
     }
 
-    private async Task<List<(NetworkConfig, float)>> RunNetworkMutations(NetworkConfig network,
+    private async Task<List<(NeuralNetwork, float)>> RunNetworkMutations(int generationIndex,
+        NeuralNetwork network,
         NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        var results = new List<(NetworkConfig, float)>();
+        var results = new List<(NeuralNetwork, float)>();
+        var bestResult = 0.0f;
         for (var i = 0; i < trainingConfig.Mutations; i++)
         {
             var mutatedNetwork = _mutation.Mutate(network);
-            results.Add((mutatedNetwork, executor(new NeuralNetwork(mutatedNetwork))));
+            var result = executor(mutatedNetwork);
+            results.Add((mutatedNetwork, result));
+            bestResult = result > bestResult ? result : bestResult;
         }
 
         stopwatch.Stop();
 
-        _logger.LogInformation("Ran {mutations} mutations in {elapsed}", trainingConfig.Mutations, stopwatch.Elapsed);
+        _logger.LogInformation("Generation {generationIndex} - {mutations} mutations in {elapsed}, best result '{bestResult}'", generationIndex, trainingConfig.Mutations, stopwatch.Elapsed, bestResult);
 
         return results;
     }
