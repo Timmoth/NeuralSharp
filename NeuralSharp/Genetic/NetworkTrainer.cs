@@ -31,14 +31,17 @@ public sealed class NetworkTrainer
 
         for (var j = 0; j < trainingConfig.Generations; j++)
         {
-            var tasks = results.Select((r, i) => Task.Run(() => RunNetworkMutations(j, i, r.Item1, trainingConfig, executor)));
-
+            var taskCount = results.Count;
             _logger.LogInformation(
                 "Starting generation {generation}. Running {mutations} mutations over {tasks} parallel tasks.", j,
-                tasks.Count() * trainingConfig.Mutations, tasks.Count());
+                taskCount * trainingConfig.Mutations, taskCount);
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
+
+            var tasks = results
+                .Select((r, i) => Task.Run(() => RunNetworkMutations(j, i, r.Item1, trainingConfig, executor)))
+                .ToList();
 
             await Task.WhenAll(tasks);
 
@@ -65,7 +68,7 @@ public sealed class NetworkTrainer
         return bestNetwork;
     }
 
-    private async Task<List<(NeuralNetwork, float)>> RunNetworkMutations(int generationIndex, int networkIndex,
+    private List<(NeuralNetwork, float)> RunNetworkMutations(int generationIndex, int networkIndex,
         NeuralNetwork network,
         NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
