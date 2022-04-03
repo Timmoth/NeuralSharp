@@ -19,7 +19,7 @@ services.AddTransient<INeuralNetworkIo>(_ => new FileNetworkIo("./network.json")
 services.AddTransient<INetworkMutator, NetworkMutator>();
 services.AddTransient<IFloatMutator, FloatMutator>();
 services.AddTransient<IMutationDecider>(_ => new MutationDecider(0.02f));
-services.AddTransient<Trainer>();
+services.AddTransient<NetworkTrainer>();
 services.AddLogging(b => b
     .AddFilter("Microsoft", LogLevel.Warning)
     .AddFilter("System", LogLevel.Warning)

@@ -4,20 +4,20 @@ using NeuralSharp.Serialization;
 
 namespace NeuralSharp.Genetic;
 
-public sealed class Trainer
+public sealed class NetworkTrainer
 {
-    private readonly ILogger<Trainer> _logger;
+    private readonly ILogger<NetworkTrainer> _logger;
     private readonly INetworkMutator _mutation;
     private readonly INeuralNetworkIo _neuralNetworkIo;
 
-    public Trainer(ILogger<Trainer> logger, INetworkMutator mutation, INeuralNetworkIo neuralNetworkIo)
+    public NetworkTrainer(ILogger<NetworkTrainer> logger, INetworkMutator mutation, INeuralNetworkIo neuralNetworkIo)
     {
         _mutation = mutation;
         _neuralNetworkIo = neuralNetworkIo;
         _logger = logger;
     }
 
-    public async Task<(NetworkConfig, float)> Run(NetworkConfig networkConfig, TrainingConfig trainingConfig,
+    public async Task<(NetworkConfig, float)> Run(NetworkConfig networkConfig, NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
         var bestNetwork = (networkConfig, 0.0f);
@@ -51,7 +51,7 @@ public sealed class Trainer
                 .OrderByDescending(r => r.Item2)
                 .Take(trainingConfig.Offspring).ToList();
 
-            _logger.LogInformation("Results '{results}'", string.Join(", ", results));
+            _logger.LogInformation("Results '{results}'", string.Join(", ", results.Select(r => r.Item2)));
 
             bestNetwork = results.First();
 
@@ -66,7 +66,7 @@ public sealed class Trainer
     }
 
     private async Task<List<(NetworkConfig, float)>> RunNetworkMutations(NetworkConfig network,
-        TrainingConfig trainingConfig,
+        NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
         var stopwatch = new Stopwatch();
