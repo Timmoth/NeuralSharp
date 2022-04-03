@@ -7,9 +7,9 @@
 		<LangVersion>10.0</LangVersion>
 		<Authors>Aptacode</Authors>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.1</Version>
-		<AssemblyVersion>1.0.1</AssemblyVersion>
-		<FileVersion>1.0.1</FileVersion>
+		<Version>1.0.2</Version>
+		<AssemblyVersion>1.0.2</AssemblyVersion>
+		<FileVersion>1.0.2</FileVersion>
 		<RepositoryUrl>https://github.com/Aptacode/AppFramework</RepositoryUrl>
 		<Description>.NET 6 machine learning library</Description>
 		<PackageProjectUrl>https://github.com/Timmoth/NeuralSharp</PackageProjectUrl>

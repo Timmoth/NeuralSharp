@@ -23,12 +23,9 @@ public sealed class Evolution
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        var networks = new List<NetworkConfig>
-        {
-            network
-        };
+        var networks = new List<NetworkConfig>();
 
-        for (var i = 0; i < evolutionConfig.Mutations - 1; i++)
+        for (var i = 0; i < evolutionConfig.Mutations; i++)
         {
             networks.Add(_mutation.Mutate(network));
         }
@@ -67,8 +64,7 @@ public sealed class Evolution
         for (var j = 0; j < evolutionConfig.Generations; j++)
         {
             var tasks = results.Select(r => Task.Run(() => RunMutation(r.Item1, evolutionConfig, executor)));
-            _logger.LogInformation(
-                $"Generation {j} starting. Running {tasks.Count() * evolutionConfig.Mutations} games over {tasks.Count()} tasks");
+            _logger.LogInformation("Generation {generation} starting. Running {mutations} mutations over {tasks} parallel tasks.", j, tasks.Count() * evolutionConfig.Mutations, tasks.Count());
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -77,18 +73,16 @@ public sealed class Evolution
 
             stopwatch.Stop();
 
-            _logger.LogInformation($"Generation {j} complete in {stopwatch.Elapsed}");
+            _logger.LogInformation("Generation {generation} complete in {duration}", j, stopwatch.Elapsed);
+            
+            results.AddRange(tasks
+                .SelectMany(m => m.Result));
 
-            results = tasks
-                .SelectMany(m => m.Result)
+            results = results
                 .OrderByDescending(r => r.Item2)
                 .Take(evolutionConfig.Offspring).ToList();
 
-
-            foreach (var result in results)
-            {
-                Console.WriteLine($"{result.Item2}");
-            }
+            _logger.LogInformation("Results '{results}'", string.Join(", ", results));
 
             bestRun = results.First();
 

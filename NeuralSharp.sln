@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{F69D6503-1E2D-400E-98DF-5CF8FA8E2E13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralSharp", "NeuralNetwork\NeuralSharp.csproj", "{4B30783B-821F-4EC9-8856-2325BE90C078}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralSharp", "NeuralSharp\NeuralSharp.csproj", "{4B30783B-821F-4EC9-8856-2325BE90C078}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorDemo", "BlazorDemo\BlazorDemo.csproj", "{B9F561BD-1327-47B2-BD25-CB695A230E85}"
 EndProject
