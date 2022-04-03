@@ -46,8 +46,8 @@ public sealed class NetworkTrainer
 
             _logger.LogInformation("Generation {generation} complete in {duration}", j, stopwatch.Elapsed);
 
-            results = results.Concat(tasks
-                    .SelectMany(m => m.Result))
+            results = tasks
+                    .SelectMany(m => m.Result)
                 .OrderByDescending(r => r.Item2)
                 .Take(trainingConfig.Offspring).ToList();
 
