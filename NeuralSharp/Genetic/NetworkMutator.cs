@@ -17,20 +17,30 @@ public static class NetworkCrossover
             var neurons = new List<NeuronData>();
             for (var j = 0; j < alayerConfig.Neurons.Count; j++)
             {
-                if (m.ShouldMutate(0.5f))
-                {
-                    neurons.Add(alayerConfig.Neurons[j]);
-                }
-                else
-                {
-                    neurons.Add(blayerConfig.Neurons[j]);
-                }
+                neurons.Add(m.ShouldMutate(0.5f) ? alayerConfig.Neurons[j] : blayerConfig.Neurons[j]);
             }
 
             layers.Add(new LayerConfig(neurons));
         }
 
         return new NetworkConfig(layers);
+    }
+
+    public static NetworkConfig CrossOver(this IEnumerable<NetworkConfig> networks)
+    {
+        var child = networks.First();
+        return networks.Skip(1).Aggregate(child, (current, networkConfig) => current.CrossOver(networkConfig));
+    }
+
+    public static IEnumerable<NetworkConfig> CrossOver(this IEnumerable<NetworkConfig> results, int childrenCount)
+    {
+        var children = new List<NetworkConfig>();
+        for (var l = 0; l < childrenCount; l++)
+        {
+            children.Add(results.CrossOver());
+        }
+
+        return children;
     }
 }
 
