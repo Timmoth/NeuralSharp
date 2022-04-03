@@ -48,6 +48,14 @@ public static class NetworkCrossover
     {
         return n.ElementAt(Random.Shared.Next(0, n.Count()));
     }
+    private static float SelectBias(this IEnumerable<NeuralNetwork> n, int i, int j)
+    {
+        return SelectRandom(n).Layers[i].Neurons[j].Bias;
+    }
+    private static float SelectWeight(this IEnumerable<NeuralNetwork> n, int i, int j, int k)
+    {
+        return SelectRandom(n).Layers[i].Neurons[j].Out[k].Weight;
+    }
 
     public static NeuralNetwork CrossOver(this IEnumerable<NeuralNetwork> networks)
     {
@@ -56,36 +64,36 @@ public static class NetworkCrossover
         var layers = new Layer[firstNetwork.Layers.Length];
         for (var i = 0; i < layers.Length; i++)
         {
-            var layerA = firstNetwork.Layers[i];
-
-            var neurons = new Neuron[layerA.Neurons.Length];
+            var neurons = new Neuron[firstNetwork.Layers[i].Neurons.Length];
 
             for (var j = 0; j < neurons.Length; j++)
             {
-                //Select the neuron to copy
-                var selectedNeuron = networks.SelectRandom().Layers[i].Neurons[j];
-
                 //Create the new neuron
-                var neuron = neurons[j] = new Neuron()
+                neurons[j] = new Neuron()
                 {
-                    Bias = selectedNeuron.Bias
+                    Bias = networks.SelectBias(i, j)
                 };
-
-                if (i > 0)
-                {
-                    //Connect the last layer to the current layer
-                    var previousLayer = layers[i - 1];
-                    var connections = selectedNeuron.In;
-                    for (var k = 0; k < connections.Count; k++)
-                    {
-                        previousLayer.Neurons[k].Connect(neuron, connections[k].Weight);
-                    }
-                }
-
             }
-            
+
+
             //Create the layer from the layer data
             layers[i] = new Layer(neurons);
+
+            if (i > 0)
+            {
+                var layer = layers[i];
+                //Connect the last layer to the current layer
+                var previousLayer = layers[i - 1];
+
+                for (var k = 0; k < previousLayer.Neurons.Length; k++)
+                {
+                    var n = previousLayer.Neurons[k];
+                    for (var l = 0; l < layer.Neurons.Length; l++)
+                    {
+                       n.Connect(layer.Neurons[l], networks.SelectWeight(i - 1, k, l));
+                    }
+                }
+            }
         }
 
         return new NeuralNetwork(layers);
