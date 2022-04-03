@@ -66,7 +66,7 @@ public static class NetworkCrossover
                 var selectedNeuron = networks.SelectRandom().Layers[i].Neurons[j];
 
                 //Create the new neuron
-                neurons[j] = new Neuron()
+                var neuron = neurons[j] = new Neuron()
                 {
                     Bias = selectedNeuron.Bias
                 };
@@ -78,7 +78,7 @@ public static class NetworkCrossover
                     var connections = selectedNeuron.In;
                     for (var k = 0; k < connections.Count; k++)
                     {
-                        previousLayer.Neurons[k].Connect(neurons[k], connections[k].Weight);
+                        previousLayer.Neurons[k].Connect(neuron, connections[k].Weight);
                     }
                 }
 
