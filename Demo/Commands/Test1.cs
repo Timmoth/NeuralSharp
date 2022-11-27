@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using NeuralSharp;
 using NeuralSharp.Activation;
 using NeuralSharp.Generators;
-using Spectre.Console.Cli;
+using Spectre.Console;
 
 namespace Demo.Commands;
 
