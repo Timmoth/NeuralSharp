@@ -13,7 +13,7 @@ public sealed class Neuron : IEquatable<Neuron>
         Activation = 0.0f;
     }
 
-    public NeuronData Data => new(Bias, Out.Select(c => c.Weight).ToList());
+    public NeuronData Data => new(Bias, Out.Select(c => c.Weight).ToArray());
 
     public override string ToString()
     {
@@ -25,8 +25,9 @@ public sealed class Neuron : IEquatable<Neuron>
         //Update the bias
         Bias -= error * learningRate;
 
-        foreach (var connection in In)
+        for (int i = 0; i < In.Count; i++)
         {
+            Connection? connection = In[i];
             //Update the weight for each connection going into the output neuron
             connection.Weight -= error * connection.From.Activation * learningRate;
         }

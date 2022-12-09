@@ -2,8 +2,9 @@
 
 public class BiasGenerator : IBiasGenerator
 {
+    private static readonly Random _random = new();
     public float Generate()
     {
-        return Random.Shared.Next(-100, 100) / 100.0f;
+        return _random.Next(-100, 100) / 100.0f;
     }
 }

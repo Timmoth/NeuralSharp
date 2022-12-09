@@ -98,9 +98,9 @@ public class NeuralNetworkBackPropagateTests
 
         //Assert
         Assert.Equal(new[] { 0.25f }, actualOutput);
-        Assert.Equal(new NeuronData(0.2f, new List<float> { 0.40125f }), network.Layers[0].Neurons[0].Data);
-        Assert.Equal(new NeuronData(0.3f, new List<float> { 0.210000008f }), network.Layers[0].Neurons[1].Data);
-        Assert.Equal(new NeuronData(0.3125f, new List<float>()), network.Layers[1].Neurons[0].Data);
+        Assert.Equal(new NeuronData(0.2f, new float[] { 0.40125f }), network.Layers[0].Neurons[0].Data);
+        Assert.Equal(new NeuronData(0.3f, new float[] { 0.210000008f }), network.Layers[0].Neurons[1].Data);
+        Assert.Equal(new NeuronData(0.3125f, new float[0]), network.Layers[1].Neurons[0].Data);
     }
 
     [Fact]

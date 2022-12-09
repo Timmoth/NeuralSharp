@@ -3,6 +3,7 @@
 public sealed class MutationDecider : IMutationDecider
 {
     private readonly float _mutationRate;
+    private static readonly Random _random = new();
 
     public MutationDecider(float mutationRate)
     {
@@ -11,6 +12,6 @@ public sealed class MutationDecider : IMutationDecider
 
     public bool ShouldMutate(float v)
     {
-        return Random.Shared.NextDouble() < _mutationRate;
+        return _random.NextDouble() < _mutationRate;
     }
 }

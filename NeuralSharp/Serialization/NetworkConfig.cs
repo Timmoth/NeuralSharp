@@ -1,6 +1,6 @@
 ﻿namespace NeuralSharp.Serialization;
 
-public sealed record NetworkConfig(List<LayerConfig> Layers)
+public sealed record NetworkConfig(LayerConfig[] Layers)
 {
     public bool Equals(NetworkConfig other)
     {
@@ -9,18 +9,20 @@ public sealed record NetworkConfig(List<LayerConfig> Layers)
 
     public static NetworkConfig From(NeuralNetwork network)
     {
-        var layers = new List<LayerConfig>();
-        foreach (var networkLayer in network.Layers)
+        var layers = new LayerConfig[network.Layers.Length];
+        for (int i = 0; i < network.Layers.Length; i++)
         {
-            var neuronData = new List<NeuronData>();
+            Layer? networkLayer = network.Layers[i];
+            var neuronData = new NeuronData[networkLayer.Neurons.Length];
 
-            foreach (var neuron in networkLayer.Neurons)
+            for (int i1 = 0; i1 < networkLayer.Neurons.Length; i1++)
             {
-                var weights = neuron.Out.Select(c => c.Weight).ToList();
-                neuronData.Add(new NeuronData(neuron.Bias, weights));
+                Neuron? neuron = networkLayer.Neurons[i1];
+                var weights = neuron.Out.Select(c => c.Weight).ToArray();
+                neuronData[i1] = new NeuronData(neuron.Bias, weights);
             }
 
-            layers.Add(new LayerConfig(neuronData));
+            layers[i] = new LayerConfig(neuronData);
         }
 
         return new NetworkConfig(layers);
@@ -28,17 +30,19 @@ public sealed record NetworkConfig(List<LayerConfig> Layers)
 
     public NetworkConfig DeepCopy()
     {
-        var layers = new List<LayerConfig>();
-        foreach (var networkLayer in Layers)
+        var layers = new LayerConfig[Layers.Length];
+        for (int i = 0; i < Layers.Length; i++)
         {
-            var neuronData = new List<NeuronData>();
+            LayerConfig? networkLayer = Layers[i];
+            var neuronData = new NeuronData[networkLayer.Neurons.Length];
 
-            foreach (var neuron in networkLayer.Neurons)
+            for (int i1 = 0; i1 < networkLayer.Neurons.Length; i1++)
             {
-                neuronData.Add(new NeuronData(neuron.Bias, neuron.Weights.ToList()));
+                NeuronData? neuron = networkLayer.Neurons[i1];
+                neuronData[i1] = new NeuronData(neuron.Bias, neuron.Weights);
             }
 
-            layers.Add(new LayerConfig(neuronData));
+            layers[i] = new LayerConfig(neuronData);
         }
 
         return new NetworkConfig(layers);

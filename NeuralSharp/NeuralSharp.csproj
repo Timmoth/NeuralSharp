@@ -16,12 +16,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	  <Compile Remove="Training\**" />
+	  <EmbeddedResource Remove="Training\**" />
+	  <None Remove="Training\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Training\" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	</ItemGroup>
 
 </Project>

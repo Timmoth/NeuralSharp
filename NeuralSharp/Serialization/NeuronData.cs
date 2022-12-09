@@ -2,7 +2,7 @@
 
 namespace NeuralSharp.Serialization;
 
-public sealed record NeuronData(float Bias, List<float> Weights)
+public sealed record NeuronData(float Bias, float[] Weights)
 {
     public bool Equals(NeuronData other)
     {

@@ -1,5 +1,6 @@
 ﻿using NeuralSharp.Helpers;
 using NeuralSharp.Serialization;
+using System.Linq;
 
 namespace NeuralSharp.Genetic;
 
@@ -9,19 +10,19 @@ public static class NetworkCrossover
     {
         var m = new MutationDecider(0.5f);
 
-        var layers = new List<LayerConfig>();
-        for (var i = 0; i < ac.Layers.Count; i++)
+        var layers = new LayerConfig[ac.Layers.Length];
+        for (var i = 0; i < ac.Layers.Length; i++)
         {
             var alayerConfig = ac.Layers[i];
             var blayerConfig = bc.Layers[i];
 
-            var neurons = new List<NeuronData>();
-            for (var j = 0; j < alayerConfig.Neurons.Count; j++)
+            var neurons = new NeuronData[alayerConfig.Neurons.Length];
+            for (var j = 0; j < alayerConfig.Neurons.Length; j++)
             {
-                neurons.Add(m.ShouldMutate(0.5f) ? alayerConfig.Neurons[j] : blayerConfig.Neurons[j]);
+                neurons[j] = m.ShouldMutate(0.5f) ? alayerConfig.Neurons[j] : blayerConfig.Neurons[j];
             }
 
-            layers.Add(new LayerConfig(neurons));
+            layers[i] = new LayerConfig(neurons);
         }
 
         return new NetworkConfig(layers);
@@ -147,15 +148,15 @@ public sealed class NetworkMutator : INetworkMutator
     {
         var layers = network.Layers
             .Select(layer => layer.Neurons
-                .Select(neuron => new NeuronData(Mutate(neuron.Bias), neuron.Weights.Select(Mutate).ToList())).ToList())
-            .Select(neurons => new LayerConfig(neurons)).ToList();
+                .Select(neuron => new NeuronData(Mutate(neuron.Bias), neuron.Weights.Select(Mutate).ToArray())).ToArray())
+            .Select(neurons => new LayerConfig(neurons)).ToArray();
 
         return new NetworkConfig(layers);
     }
 
     public NeuralNetwork MutateFromConfig(NetworkConfig network)
     {
-        var layers = new Layer[network.Layers.Count];
+        var layers = new Layer[network.Layers.Length];
         for (var i = 0; i < layers.Length; i++)
         {
             var layerData = network.Layers[i];

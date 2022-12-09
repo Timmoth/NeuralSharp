@@ -48,8 +48,8 @@ public sealed class Layer : IEquatable<Layer>
 
     public static Layer Create(LayerConfig layerConfig)
     {
-        var neurons = new Neuron[layerConfig.Neurons.Count];
-        for (var j = 0; j < layerConfig.Neurons.Count; j++)
+        var neurons = new Neuron[layerConfig.Neurons.Length];
+        for (var j = 0; j < layerConfig.Neurons.Length; j++)
         {
             neurons[j] = new Neuron
             {
@@ -66,23 +66,24 @@ public sealed class Layer : IEquatable<Layer>
 
     public void Connect(IWeightGenerator weightGenerator, Layer layer)
     {
-        foreach (var to in layer.Neurons)
+        for (int i = 0; i < layer.Neurons.Length; i++)
         {
-            foreach (var from in Neurons)
+            var to = layer.Neurons[i];
+            for (int i1 = 0; i1 < Neurons.Length; i1++)
             {
-                from.Connect(to, weightGenerator.Generate());
+                Neurons[i1].Connect(to, weightGenerator.Generate());
             }
         }
     }
 
     public void Connect(Layer layer, LayerConfig layerConfig)
     {
-        for (var i = 0; i < Neurons.Count(); i++)
+        for (var i = 0; i < Neurons.Length; i++)
         {
             var fromNeuron = Neurons[i];
             var fromNeuronData = layerConfig.Neurons[i];
             var weights = fromNeuronData.Weights;
-            for (var j = 0; j < layer.Neurons.Count(); j++)
+            for (var j = 0; j < layer.Neurons.Length; j++)
             {
                 var toNeuron = layer.Neurons[j];
                 fromNeuron.Connect(toNeuron, weights[j]);
@@ -104,8 +105,9 @@ public sealed class Layer : IEquatable<Layer>
 
     public void Activate(IActivationFunction activation)
     {
-        foreach (var neuron in Neurons)
+        for (int i = 0; i < Neurons.Length; i++)
         {
+            var neuron = Neurons[i];
             var weightedActivations = neuron.In.Sum(connection => connection.Weight * connection.From.Activation);
             neuron.Activation = activation.Activate(weightedActivations + neuron.Bias);
         }

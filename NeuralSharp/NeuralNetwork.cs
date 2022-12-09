@@ -49,7 +49,7 @@ public sealed class NeuralNetwork
     /// <param name="networkConfig"></param>
     public NeuralNetwork(NetworkConfig networkConfig)
     {
-        Layers = new Layer[networkConfig.Layers.Count];
+        Layers = new Layer[networkConfig.Layers.Length];
         for (var i = 0; i < Layers.Length; i++)
         {
             var layerData = networkConfig.Layers[i];
@@ -97,7 +97,14 @@ public sealed class NeuralNetwork
         }
 
         //return output activations
-        return Layers[^1].Neurons.Select(n => n.Activation).ToArray();
+        var lastLayerNeurons = Layers[^1].Neurons;
+        var activations = new float[lastLayerNeurons.Length];
+        for(var i = 0; i <activations.Length; i++)
+        {
+            activations[i] = lastLayerNeurons[i].Activation;
+        }
+
+        return activations;
     }
 
     /// <summary>
@@ -172,7 +179,6 @@ public sealed class NeuralNetwork
     {
         return HashCode.Combine(Layers);
     }
-
 
     public static bool operator ==(NeuralNetwork b1, NeuralNetwork b2)
     {

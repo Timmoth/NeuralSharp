@@ -1,6 +1,6 @@
 ﻿namespace NeuralSharp.Serialization;
 
-public sealed record LayerConfig(List<NeuronData> Neurons)
+public sealed record LayerConfig(NeuronData[] Neurons)
 {
     public bool Equals(LayerConfig other)
     {
