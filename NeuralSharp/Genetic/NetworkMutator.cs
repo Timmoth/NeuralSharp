@@ -1,11 +1,12 @@
 ﻿using NeuralSharp.Helpers;
 using NeuralSharp.Serialization;
-using System.Linq;
 
 namespace NeuralSharp.Genetic;
 
 public static class NetworkCrossover
 {
+    private static readonly Random _random = new();
+
     public static NetworkConfig CrossOver(this NetworkConfig ac, NetworkConfig bc)
     {
         var m = new MutationDecider(0.5f);
@@ -47,7 +48,7 @@ public static class NetworkCrossover
 
     private static NeuralNetwork SelectRandom(this IEnumerable<NeuralNetwork> n)
     {
-        return n.ElementAt(Random.Shared.Next(0, n.Count()));
+        return n.ElementAt(_random.Next(0, n.Count()));
     }
     private static float SelectBias(this IEnumerable<NeuralNetwork> n, int i, int j)
     {
@@ -128,14 +129,17 @@ public sealed class NetworkMutator : INetworkMutator
 
     public NeuralNetwork Mutate(NeuralNetwork network)
     {
-        foreach (var layer in network.Layers)
+        for (int i = 0; i < network.Layers.Length; i++)
         {
-            foreach (var neuron in layer.Neurons)
+            Layer? layer = network.Layers[i];
+            for (int i1 = 0; i1 < layer.Neurons.Length; i1++)
             {
+                Neuron? neuron = layer.Neurons[i1];
                 neuron.Bias = Mutate(neuron.Bias);
 
-                foreach (var connection in neuron.Out)
+                for (int i2 = 0; i2 < neuron.Out.Count; i2++)
                 {
+                    Connection? connection = neuron.Out[i2];
                     connection.Weight = Mutate(connection.Weight);
                 }
             }

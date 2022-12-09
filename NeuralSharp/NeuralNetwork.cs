@@ -1,7 +1,6 @@
 ﻿using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using NeuralSharp.Serialization;
-using Newtonsoft.Json.Linq;
 
 namespace NeuralSharp;
 
@@ -59,8 +58,7 @@ public sealed class NeuralNetwork
             if (i > 0)
             {
                 //Connect the last layer to the current layer
-                var previousLayer = Layers[i - 1];
-                previousLayer.Connect(Layers[i], networkConfig.Layers[i - 1]);
+                Layers[i - 1].Connect(Layers[i], networkConfig.Layers[i - 1]);
             }
         }
     }
@@ -68,11 +66,6 @@ public sealed class NeuralNetwork
     public NeuralNetwork(Layer[] layers)
     {
         Layers = layers;
-    }
-
-    public static NeuralNetwork From(object o)
-    {
-        return new NeuralNetwork(JObject.FromObject(o).ToObject<NetworkConfig>());
     }
 
     #endregion
@@ -88,7 +81,7 @@ public sealed class NeuralNetwork
     public float[] FeedForward(IActivationFunction activationFunction, float[] inputs)
     {
         //Activate input layer
-        Layers[0].Activate(activationFunction, inputs);
+        Layers[0].Activate(inputs);
 
         //Activate each layer of the network
         for (var i = 1; i < Layers.Length; i++)
@@ -164,35 +157,6 @@ public sealed class NeuralNetwork
         }
 
         return output;
-    }
-
-    #endregion
-
-    #region Equality
-
-    public bool Equals(NeuralNetwork other)
-    {
-        return (object)other != null && Layers.SequenceEqual(other.Layers);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Layers);
-    }
-
-    public static bool operator ==(NeuralNetwork b1, NeuralNetwork b2)
-    {
-        if ((object)b1 == null)
-        {
-            return (object)b2 == null;
-        }
-
-        return b1.Equals(b2);
-    }
-
-    public static bool operator !=(NeuralNetwork b1, NeuralNetwork b2)
-    {
-        return !(b1 == b2);
     }
 
     #endregion
