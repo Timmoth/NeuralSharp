@@ -4,6 +4,7 @@ using NeuralSharp;
 using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace Demo.Commands;
 
