@@ -9,19 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="network.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="network.json">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Aptacode.AppFramework" Version="1.0.46" />
+		<PackageReference Include="Aptacode.AppFramework" Version="1.1.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />

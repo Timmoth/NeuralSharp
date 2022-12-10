@@ -1,12 +1,11 @@
 ﻿using NeuralSharp.Helpers;
 using NeuralSharp.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace NeuralSharp.Genetic;
 
 public static class NetworkCrossover
 {
-    private static readonly Random _random = new();
-
     public static NetworkConfig CrossOver(this NetworkConfig ac, NetworkConfig bc)
     {
         var m = new MutationDecider(0.5f);
@@ -48,7 +47,7 @@ public static class NetworkCrossover
 
     private static NeuralNetwork SelectRandom(this IEnumerable<NeuralNetwork> n)
     {
-        return n.ElementAt(_random.Next(0, n.Count()));
+        return n.ElementAt(Random.Shared.Next(0, n.Count()));
     }
     private static float SelectBias(this IEnumerable<NeuralNetwork> n, int i, int j)
     {
@@ -178,6 +177,7 @@ public sealed class NetworkMutator : INetworkMutator
         return new NeuralNetwork(layers);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private float Mutate(float value)
     {
         return !_mutationDecider.ShouldMutate(value) ? value : _floatMutator.Mutate(value);

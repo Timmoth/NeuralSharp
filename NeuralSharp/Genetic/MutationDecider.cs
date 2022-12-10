@@ -1,4 +1,6 @@
-﻿namespace NeuralSharp.Genetic;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeuralSharp.Genetic;
 
 public sealed class MutationDecider : IMutationDecider
 {
@@ -10,6 +12,7 @@ public sealed class MutationDecider : IMutationDecider
         _mutationRate = mutationRate;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ShouldMutate(float v)
     {
         return _random.NextDouble() < _mutationRate;

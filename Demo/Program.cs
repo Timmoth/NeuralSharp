@@ -6,6 +6,7 @@ using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using NeuralSharp.Genetic;
 using Spectre.Console.Cli;
+using Trainer.Commands;
 
 // Create a type registrar and register any dependencies.
 // A type registrar is an adapter for a DI framework.
@@ -36,6 +37,9 @@ app.Configure(config =>
 
     config.AddCommand<Test2Command>("test2")
         .WithDescription("Run Test 2");
+
+    config.AddCommand<Test3Command>("snake")
+    .WithDescription("Run Test Snake");
 
 #if DEBUG
     config.PropagateExceptions();

@@ -17,50 +17,66 @@ public sealed class NetworkTrainer
         _logger = logger;
     }
 
-    public async Task<(NeuralNetwork, float)> Run(NeuralNetwork networkConfig, NetworkTrainerConfig trainingConfig,
+    public async Task<NeuralNetwork> Run(NeuralNetwork networkConfig, NetworkTrainerConfig trainingConfig,
         Func<NeuralNetwork, float> executor)
     {
-        var bestNetwork = (networkConfig, 0.0f);
+        var offspring = new NeuralNetwork[trainingConfig.Offspring];
+        var tasks = new Task<(NeuralNetwork, float)>[trainingConfig.Offspring];
 
-        var results = new List<(NeuralNetwork, float)>
+        // Generate initial generation from given network
+        var bestNetwork = offspring[0] = networkConfig;
+        for (int i = 1; i < offspring.Length; i++)
         {
-            bestNetwork
-        };
+            offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(bestNetwork)));
+        }
 
         _logger.LogInformation("Starting training: {config}", trainingConfig);
 
         for (var j = 0; j < trainingConfig.Generations; j++)
         {
-            var taskCount = results.Count;
-            _logger.LogInformation(
-                "Starting generation {generation}. Running {mutations} mutations over {tasks} parallel tasks.", j,
-                taskCount * trainingConfig.Mutations, taskCount);
-
+            // Time iteration
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var tasks = results
-                .Select((r, i) => Task.Run(() => RunNetworkMutations(j, i, r.Item1, trainingConfig, executor)))
-                .ToList();
+            // Get the average score for each network
+            for(var k = 0; k < tasks.Length; k++)
+            {
+                // capture k
+                var index = k;
 
-            await Task.WhenAll(tasks);
+                tasks[index] = (Task.Run(() => {
+                    var network = offspring[index];
+                    var averageScore = GetAverageNetworkScore(network, executor, trainingConfig.Runs);
+                    return (network, averageScore);
+                    }
+                ));
+            }
+
+            // Wait for all tasks to finish executing
+            var results = await Task.WhenAll(tasks);
 
             stopwatch.Stop();
 
-            results = tasks
-                    .SelectMany(m => m.Result)
-                .OrderByDescending(r => r.Item2)
-                .Take(trainingConfig.Offspring).ToList();
+            // The most successful reproduce
+            var mostSuccessfulOffspring = results.OrderByDescending(x => x.Item2);
+            offspring[0] = bestNetwork = mostSuccessfulOffspring.First().Item1;
+            var second = mostSuccessfulOffspring.ElementAt(1).Item1;
+            for (int i = 1; i < offspring.Length; i++)
+            {
+                if(i % 8 <= 2)
+                {
+                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(second)));
+                }
+                else
+                {
+                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(bestNetwork)));
+                }
+            }
 
-            _logger.LogInformation("Completed generation {generation} in {duration}. Results '{results}'", j, stopwatch.Elapsed, string.Join(", ", results.Select(r => r.Item2)));
+            _logger.LogInformation("Completed generation {generation} in {duration}. Results '{results}'", j, stopwatch.Elapsed, string.Join(", ", mostSuccessfulOffspring.Select(r => r.Item2).Average()));
 
-            bestNetwork = results.First();
-
-            //Create children
-            var networks = results.Select(c => c.Item1).CrossOver(trainingConfig.Offspring);
-            results.AddRange(networks.Select(n => (n, 0.0f)));
-
-            await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork.networkConfig));
+            //Save file
+            await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork));
         }
 
         _logger.LogInformation("Finished training: {config}", trainingConfig);
@@ -68,30 +84,24 @@ public sealed class NetworkTrainer
         return bestNetwork;
     }
 
-    private List<(NeuralNetwork, float)> RunNetworkMutations(int generationIndex, int networkIndex,
+    /// <summary>
+    /// Executes the given network task a specified number of times and returns the average score
+    /// </summary>
+    /// <param name="network"></param>
+    /// <param name="networkTask"></param>
+    /// <param name="runs"></param>
+    /// <returns></returns>
+    private float GetAverageNetworkScore(
         NeuralNetwork network,
-        NetworkTrainerConfig trainingConfig,
-        Func<NeuralNetwork, float> executor)
+        Func<NeuralNetwork, float> networkTask,
+        int runs)
     {
-        _logger.LogTrace("{generationIndex},{mutationIndex} - Started ", generationIndex, networkIndex);
-
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        var results = new List<(NeuralNetwork, float)>();
-        var bestResult = 0.0f;
-        for (var i = 0; i < trainingConfig.Mutations; i++)
+        float totalScore = 0.0f;
+        for (var i = 0; i < runs; i++)
         {
-            var mutatedNetwork = _mutation.Mutate(network);
-            var result = executor(mutatedNetwork);
-            results.Add((mutatedNetwork, result));
-            bestResult = result > bestResult ? result : bestResult;
+            totalScore += networkTask(network);
         }
 
-        stopwatch.Stop();
-
-        _logger.LogTrace("{generationIndex},{mutationIndex} - Completed in {elapsed}, best result: '{bestResult}'", generationIndex, networkIndex, stopwatch.Elapsed, bestResult);
-
-        return results;
+        return totalScore / runs;
     }
 }
