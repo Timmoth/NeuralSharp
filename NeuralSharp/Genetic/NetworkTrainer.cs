@@ -9,7 +9,7 @@ public sealed class NetworkTrainer
     private readonly ILogger<NetworkTrainer> _logger;
     private readonly INetworkMutator _mutation;
     private readonly INeuralNetworkIo _neuralNetworkIo;
-
+    private readonly Random _random = new Random();
     public NetworkTrainer(ILogger<NetworkTrainer> logger, INetworkMutator mutation, INeuralNetworkIo neuralNetworkIo)
     {
         _mutation = mutation;
@@ -59,11 +59,17 @@ public sealed class NetworkTrainer
 
             // The most successful reproduce
             var mostSuccessfulOffspring = results.OrderByDescending(x => x.Item2);
-            offspring[0] = bestNetwork = mostSuccessfulOffspring.First().Item1;
-            var second = mostSuccessfulOffspring.ElementAt(1).Item1;
-            for (int i = 1; i < offspring.Length; i++)
+            bestNetwork = offspring[0] = mostSuccessfulOffspring.ElementAt(0).Item1;
+            var second = offspring[1] = mostSuccessfulOffspring.ElementAt(1).Item1;
+            var third = offspring[2] = mostSuccessfulOffspring.ElementAt(2).Item1;
+            for (int i = 3; i < offspring.Length; i++)
             {
-                if(i % 8 <= 2)
+                var rand = _random.NextDouble();
+                if (rand < 0.1)
+                {
+                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(third)));
+                }
+                else if(rand < 0.3)
                 {
                     offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(second)));
                 }
@@ -73,7 +79,7 @@ public sealed class NetworkTrainer
                 }
             }
 
-            _logger.LogInformation("Completed generation {generation} in {duration}. Results '{results}'", j, stopwatch.Elapsed, string.Join(", ", mostSuccessfulOffspring.Select(r => r.Item2).Average()));
+            _logger.LogInformation("Completed generation {generation} in {duration}. Average: '{results}', Best: '{best}'", j, stopwatch.Elapsed, string.Join(", ", mostSuccessfulOffspring.Select(r => r.Item2).Average()), mostSuccessfulOffspring.First().Item2);
 
             //Save file
             await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork));

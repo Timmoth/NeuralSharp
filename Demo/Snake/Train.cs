@@ -48,8 +48,8 @@ internal sealed class
 
     public async Task Run()
     {
-        var evolutionConfig = new NetworkTrainerConfig(10000, 1000, 4);
-        await _evolution.Run(new NeuralNetwork(w, b, 24, 32, 32, 4), evolutionConfig, Run);
+        var evolutionConfig = new NetworkTrainerConfig(10000, 500, 20);
+        await _evolution.Run(new NeuralNetwork(w, b, 24, 24, 24, 4), evolutionConfig, Run);
     }
 
     public float Run(NeuralNetwork network)
@@ -62,7 +62,7 @@ internal sealed class
             game.Handle(100);
         }
 
-        return behaviour.Result.Fitness;
+        return behaviour.Fitness;
     }
 
     public Scene CreateGame(NeuralNetwork network)
@@ -91,12 +91,12 @@ internal sealed class
         var snakeDirection = new SnakeAIControl(scene, _activationFunction, network);
         scene.Plugins.Add(snakeDirection);
 
-        var snakeBehavioru = new SnakeBehaviour(scene)
+        var snakeBehaviour = new SnakeBehaviour(scene)
         {
             SnakeHead = snakeHead,
             SnakeFood = snakeFood
         };
-        scene.Plugins.Add(snakeBehavioru);
+        scene.Plugins.Add(snakeBehaviour);
 
         var thickness = 10.0f;
         var bottom = Polygon.Create(thickness, thickness, SnakeGameConfig.BoardSize.X - thickness, thickness,
@@ -122,12 +122,12 @@ internal sealed class
         left.BorderColor = Color.SlateGray;
 
         scene.Add(top).Add(right).Add(bottom).Add(left);
-        snakeBehavioru.Walls.Add(top);
-        snakeBehavioru.Walls.Add(right);
-        snakeBehavioru.Walls.Add(bottom);
-        snakeBehavioru.Walls.Add(left);
+        snakeBehaviour.Walls.Add(top);
+        snakeBehaviour.Walls.Add(right);
+        snakeBehaviour.Walls.Add(bottom);
+        snakeBehaviour.Walls.Add(left);
 
-        snakeBehavioru.Reset();
+        snakeBehaviour.Reset();
 
         return scene;
     }

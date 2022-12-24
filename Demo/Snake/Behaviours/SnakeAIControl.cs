@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 using Aptacode.AppFramework;
 using Aptacode.AppFramework.Plugins;
 using NeuralSharp;
@@ -12,6 +13,7 @@ public class SnakeAIControl : Plugin
     public static string BehaviourName = "SnakeAIControl";
 
     private SnakeBehaviour _snakeBehaviour;
+    private readonly float[] vision = new float[24];
 
     public SnakeAIControl(Scene scene, IActivationFunction activationFunction, NeuralNetwork neuralNetwork) :
         base(scene)
@@ -29,7 +31,7 @@ public class SnakeAIControl : Plugin
 
         _snakeBehaviour ??= Scene.Plugins.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
 
-        var vision = GetVision();
+        UpdateVision(); // update input layer
         var output = _neuralNetwork.FeedForward(_activationFunction, vision);
 
         _snakeBehaviour.SnakeHead.Direction = GetNewDirection(output);
@@ -52,29 +54,38 @@ public class SnakeAIControl : Plugin
 
     #region Vision
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Direction GetNewDirection(float[] output)
     {
         var maxOutput = 0.0f;
-        var direction = _snakeBehaviour.SnakeHead.Direction;
+        int direction = (int)_snakeBehaviour.SnakeHead.Direction;
         for (var i = 0; i < output.Length; i++)
         {
-            var outputValue = output[i];
-            if (outputValue > maxOutput)
+            if (output[i] > maxOutput)
             {
-                maxOutput = outputValue;
-                direction = (Direction)i;
+                maxOutput = output[i];
+                direction = i;
             }
         }
 
-        return direction;
+        return (Direction)direction;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool BodyCollide(Vector2 v)
     {
-        return _snakeBehaviour.SnakeBody.Any(b => b.CollidesWith(v));
+        for(int i = 0; i < _snakeBehaviour.SnakeBody.Count; i++)
+        {
+            if (_snakeBehaviour.SnakeBody[i].CollidesWith(v))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private bool WallCollide(Vector2 v)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool WallCollide(Vector2 v)
     {
         return v.X - SnakeGameConfig.CellSize.X / 2.0f <= 0 ||
                v.Y - SnakeGameConfig.CellSize.Y / 2.0f <= 0 ||
@@ -87,73 +98,49 @@ public class SnakeAIControl : Plugin
         return _snakeBehaviour.SnakeFood.CollidesWith(v);
     }
 
-    private float[] Look(Vector2 direction)
+    private void Look(Vector2 direction, int index)
     {
-        var look = new float[3];
-        var pos = _snakeBehaviour.SnakeHead.Primitive.BoundingRectangle.Center;
-        var distance = 0.0f;
         var foodFound = false;
         var bodyFound = false;
-        pos += direction;
-        distance += 1;
+        // Food / body cannot be ontop of current position
+        var pos = _snakeBehaviour.SnakeHead.Primitive.BoundingRectangle.Center + direction;
+        var distance = 1; // min distance = 1
+
         while (!WallCollide(pos))
         {
             if (!foodFound && FoodCollide(pos))
             {
+                // Food found in given direction
                 foodFound = true;
-                look[0] = 1;
             }
 
             if (!bodyFound && BodyCollide(pos))
             {
+                // own body found in given direction
                 bodyFound = true;
-                look[1] = 1;
             }
 
             pos += direction;
             distance += 1;
         }
 
-        look[2] = 1 / distance;
-        return look;
+        vision[index] = foodFound ? 1 : 0; // food found in given direction
+        vision[index + 1] = bodyFound ? 1 : 0;// No body found in given direction
+        vision[index + 2] = 1.0f / distance;// Set distance to wall
     }
 
-    private float[] GetVision()
+    private void UpdateVision()
     {
-        var vision = new float[24];
-        var temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, 0));
-        vision[0] = temp[0];
-        vision[1] = temp[1];
-        vision[2] = temp[2];
-        temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y));
-        vision[3] = temp[0];
-        vision[4] = temp[1];
-        vision[5] = temp[2];
-        temp = Look(new Vector2(0, -SnakeGameConfig.CellSize.Y));
-        vision[6] = temp[0];
-        vision[7] = temp[1];
-        vision[8] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y));
-        vision[9] = temp[0];
-        vision[10] = temp[1];
-        vision[11] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, 0));
-        vision[12] = temp[0];
-        vision[13] = temp[1];
-        vision[14] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y));
-        vision[15] = temp[0];
-        vision[16] = temp[1];
-        vision[17] = temp[2];
-        temp = Look(new Vector2(0, SnakeGameConfig.CellSize.Y));
-        vision[18] = temp[0];
-        vision[19] = temp[1];
-        vision[20] = temp[2];
-        temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y));
-        vision[21] = temp[0];
-        vision[22] = temp[1];
-        vision[23] = temp[2];
-        return vision;
+        Look(new Vector2(SnakeGameConfig.CellSize.X, 0), 0);
+        Look(new Vector2(SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y), 3);
+        Look(new Vector2(SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y), 6);
+
+        Look(new Vector2(-SnakeGameConfig.CellSize.X, 0), 9);
+        Look(new Vector2(-SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y), 12);
+        Look(new Vector2(-SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y), 15);
+
+        Look(new Vector2(0, -SnakeGameConfig.CellSize.Y), 18);
+        Look(new Vector2(0, SnakeGameConfig.CellSize.Y), 21);
     }
 
     #endregion
