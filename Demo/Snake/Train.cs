@@ -9,6 +9,7 @@ using NeuralSharp;
 using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using NeuralSharp.Genetic;
+using NeuralSharp.Serialization;
 using Snake;
 using Snake.Behaviours;
 using Snake.Components;
@@ -48,8 +49,22 @@ internal sealed class
 
     public async Task Run()
     {
-        var evolutionConfig = new NetworkTrainerConfig(10000, 500, 20);
-        await _evolution.Run(new NeuralNetwork(w, b, 24, 24, 24, 4), evolutionConfig, Run);
+        var layers = new int[] { 24, 32, 24, 4 };
+        var fileName = $"network_{string.Join("_", layers)}.json";
+        var fileNetwork = new FileNetworkIo(fileName);
+        var networkConfig = await fileNetwork.Load();
+        NeuralNetwork network;
+        if (networkConfig != null)
+        {
+            network = new NeuralNetwork(networkConfig);
+        }
+        else
+        {
+            network = new NeuralNetwork(w, b, layers);
+        }
+       
+        var evolutionConfig = new NetworkTrainerConfig(10000, 100, 20);
+        await _evolution.Run(network, evolutionConfig, Run, fileNetwork);
     }
 
     public float Run(NeuralNetwork network)

@@ -8,17 +8,15 @@ public sealed class NetworkTrainer
 {
     private readonly ILogger<NetworkTrainer> _logger;
     private readonly INetworkMutator _mutation;
-    private readonly INeuralNetworkIo _neuralNetworkIo;
-    private readonly Random _random = new Random();
-    public NetworkTrainer(ILogger<NetworkTrainer> logger, INetworkMutator mutation, INeuralNetworkIo neuralNetworkIo)
+    private readonly Random _random = new();
+    public NetworkTrainer(ILogger<NetworkTrainer> logger, INetworkMutator mutation)
     {
         _mutation = mutation;
-        _neuralNetworkIo = neuralNetworkIo;
         _logger = logger;
     }
 
     public async Task<NeuralNetwork> Run(NeuralNetwork networkConfig, NetworkTrainerConfig trainingConfig,
-        Func<NeuralNetwork, float> executor)
+        Func<NeuralNetwork, float> executor, INeuralNetworkIo neuralNetworkIo)
     {
         var offspring = new NeuralNetwork[trainingConfig.Offspring];
         var tasks = new Task<(NeuralNetwork, float)>[trainingConfig.Offspring];
@@ -69,7 +67,7 @@ public sealed class NetworkTrainer
                 {
                     offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(third)));
                 }
-                else if(rand < 0.3)
+                else if(rand < 0.25)
                 {
                     offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(second)));
                 }
@@ -82,7 +80,7 @@ public sealed class NetworkTrainer
             _logger.LogInformation("Completed generation {generation} in {duration}. Average: '{results}', Best: '{best}'", j, stopwatch.Elapsed, string.Join(", ", mostSuccessfulOffspring.Select(r => r.Item2).Average()), mostSuccessfulOffspring.First().Item2);
 
             //Save file
-            await _neuralNetworkIo.Save(NetworkConfig.From(bestNetwork));
+            await neuralNetworkIo.Save(NetworkConfig.From(bestNetwork));
         }
 
         _logger.LogInformation("Finished training: {config}", trainingConfig);

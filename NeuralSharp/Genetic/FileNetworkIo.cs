@@ -14,7 +14,14 @@ public class FileNetworkIo : INeuralNetworkIo
 
     public async Task<NetworkConfig?> Load()
     {
-        return JsonSerializer.Deserialize<NetworkConfig>(await File.ReadAllTextAsync(_filename));
+        try
+        {
+            return JsonSerializer.Deserialize<NetworkConfig>(await File.ReadAllTextAsync(_filename));
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task Save(NetworkConfig network)
