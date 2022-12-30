@@ -1,6 +1,6 @@
 ﻿using Aptacode.AppFramework.Components.Primitives;
 using Aptacode.Geometry.Primitives;
-using Snake.States;
+using Demo.Snake;
 
 namespace Snake.Components;
 

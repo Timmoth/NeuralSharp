@@ -5,9 +5,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>Aptacode</Authors>
-		<Version>1.1.3</Version>
-		<AssemblyVersion>1.1.3</AssemblyVersion>
-		<FileVersion>1.1.3</FileVersion>
+		<Version>1.1.4</Version>
+		<AssemblyVersion>1.1.4</AssemblyVersion>
+		<FileVersion>1.1.4</FileVersion>
 		<RepositoryUrl>https://github.com/Aptacode/AppFramework</RepositoryUrl>
 		<Description>.NET 7 machine learning library</Description>
 		<PackageProjectUrl>https://github.com/Timmoth/NeuralSharp</PackageProjectUrl>

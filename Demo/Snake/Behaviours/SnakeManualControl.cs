@@ -1,7 +1,7 @@
 ﻿using Aptacode.AppFramework;
 using Aptacode.AppFramework.Events;
 using Aptacode.AppFramework.Plugins;
-using Snake.States;
+using Demo.Snake;
 
 namespace Snake.Behaviours;
 

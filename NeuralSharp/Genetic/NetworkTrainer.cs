@@ -8,7 +8,6 @@ public sealed class NetworkTrainer
 {
     private readonly ILogger<NetworkTrainer> _logger;
     private readonly INetworkMutator _mutation;
-    private readonly Random _random = new();
     public NetworkTrainer(ILogger<NetworkTrainer> logger, INetworkMutator mutation)
     {
         _mutation = mutation;
@@ -16,7 +15,7 @@ public sealed class NetworkTrainer
     }
 
     public async Task<NeuralNetwork> Run(NeuralNetwork networkConfig, NetworkTrainerConfig trainingConfig,
-        Func<NeuralNetwork, float> executor, INeuralNetworkIo neuralNetworkIo)
+        Func<NeuralNetwork, Task<float>> executor, INeuralNetworkIo neuralNetworkIo)
     {
         var offspring = new NeuralNetwork[trainingConfig.Offspring];
         var tasks = new Task<(NeuralNetwork, float)>[trainingConfig.Offspring];
@@ -42,9 +41,9 @@ public sealed class NetworkTrainer
                 // capture k
                 var index = k;
 
-                tasks[index] = (Task.Run(() => {
+                tasks[index] = (Task.Run(async () => {
                     var network = offspring[index];
-                    var averageScore = GetAverageNetworkScore(network, executor, trainingConfig.Runs);
+                    var averageScore = await GetAverageNetworkScore(network, executor, trainingConfig.Runs);
                     return (network, averageScore);
                     }
                 ));
@@ -58,23 +57,9 @@ public sealed class NetworkTrainer
             // The most successful reproduce
             var mostSuccessfulOffspring = results.OrderByDescending(x => x.Item2);
             bestNetwork = offspring[0] = mostSuccessfulOffspring.ElementAt(0).Item1;
-            var second = offspring[1] = mostSuccessfulOffspring.ElementAt(1).Item1;
-            var third = offspring[2] = mostSuccessfulOffspring.ElementAt(2).Item1;
-            for (int i = 3; i < offspring.Length; i++)
+            for (int i = 1; i < offspring.Length; i++)
             {
-                var rand = _random.NextDouble();
-                if (rand < 0.1)
-                {
-                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(third)));
-                }
-                else if(rand < 0.25)
-                {
-                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(second)));
-                }
-                else
-                {
-                    offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(bestNetwork)));
-                }
+                offspring[i] = _mutation.Mutate(new NeuralNetwork(NetworkConfig.From(bestNetwork)));
             }
 
             _logger.LogInformation("Completed generation {generation} in {duration}. Average: '{results}', Best: '{best}'", j, stopwatch.Elapsed, string.Join(", ", mostSuccessfulOffspring.Select(r => r.Item2).Average()), mostSuccessfulOffspring.First().Item2);
@@ -95,15 +80,15 @@ public sealed class NetworkTrainer
     /// <param name="networkTask"></param>
     /// <param name="runs"></param>
     /// <returns></returns>
-    private float GetAverageNetworkScore(
+    private async Task<float> GetAverageNetworkScore(
         NeuralNetwork network,
-        Func<NeuralNetwork, float> networkTask,
+        Func<NeuralNetwork, Task<float>> networkTask,
         int runs)
     {
         float totalScore = 0.0f;
         for (var i = 0; i < runs; i++)
         {
-            totalScore += networkTask(network);
+            totalScore += await networkTask(network);
         }
 
         return totalScore / runs;

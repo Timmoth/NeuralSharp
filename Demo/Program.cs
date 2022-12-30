@@ -47,4 +47,4 @@ app.Configure(config =>
 #endif
 });
 
-return app.Run(args);
+return app.Run(new[] { "snake" });

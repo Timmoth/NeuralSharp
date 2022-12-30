@@ -1,9 +1,7 @@
-﻿using System.Drawing;
-using System.Numerics;
+﻿using System.Numerics;
 using Aptacode.AppFramework;
-using Aptacode.AppFramework.Components;
+using Aptacode.AppFramework.Components.Primitives;
 using Aptacode.AppFramework.Plugins;
-using Aptacode.Geometry.Primitives;
 using Snake.Components;
 
 namespace Snake.Behaviours;
@@ -14,7 +12,6 @@ public sealed class SnakeBehaviour : Plugin
         base(scene)
     {
     }
-
     public bool EnableTimer { get; set; } = true;
 
     public override bool Handle(float deltaT)
@@ -51,19 +48,18 @@ public sealed class SnakeBehaviour : Plugin
 
     private void MoveSnake()
     {
-        SnakeHead.Translate(SnakeGameConfig.GetMovement(SnakeHead.Direction));
+        SnakeHead.AddTranslation(SnakeGameConfig.GetMovement(SnakeHead.Direction));
         var lastDirection = SnakeHead.Direction;
         for (var i = 0; i < SnakeBody.Count; i++)
         {
             var bodyComponent = SnakeBody[i];
-            bodyComponent.Translate(SnakeGameConfig.GetMovement(bodyComponent.Direction));
+            bodyComponent.AddTranslation(SnakeGameConfig.GetMovement(bodyComponent.Direction));
 
             (lastDirection, bodyComponent.Direction) = (bodyComponent.Direction, lastDirection);
         }
     }
 
     #endregion
-
 
     #region Constants
 
@@ -79,8 +75,8 @@ public sealed class SnakeBehaviour : Plugin
 
     #region Properties
 
-    public int LifeLeft { get; set; }
-    public int Moves { get; set; }
+    public int LifeLeft { get; set; } = SnakeGameConfig.LifeTime;
+    public int Moves { get; set; } = 0;
     public bool Running { get; set; } = true;
     public TimeSpan TickSpeed { get; set; } = InitialTickSpeed;
     private DateTimeOffset _lastTick = DateTimeOffset.Now;
@@ -93,7 +89,7 @@ public sealed class SnakeBehaviour : Plugin
     public SnakeBodyComponent SnakeHead { get; set; }
     public SnakeFoodComponent SnakeFood { get; set; }
     public List<SnakeBodyComponent> SnakeBody { get; set; } = new();
-    public List<Component> Walls { get; set; } = new();
+    public List<PrimitiveComponent> Walls { get; set; } = new();
 
     #endregion
 
@@ -113,8 +109,7 @@ public sealed class SnakeBehaviour : Plugin
                Walls.Any(b => b.CollidesWith(SnakeHead));
     }
 
-    public float Fitness => (Score + 1) * (Score + 1) +
-                        (float)Moves / SnakeGameConfig.LifeTime;
+    public float Fitness => (Score + 1) * (Score + 1) + (float)Moves / SnakeGameConfig.LifeTime;
 
     private void EndGame()
     {
@@ -127,7 +122,7 @@ public sealed class SnakeBehaviour : Plugin
         LifeLeft = SnakeGameConfig.LifeTime;
         Moves = 0;
         TickSpeed = InitialTickSpeed;
-        SnakeHead.SetPosition(SnakeGameConfig.RandomCell(), true);
+        SnakeHead.SetTranslation(SnakeGameConfig.RandomCell());
 
         foreach (var snakeBodyComponent in SnakeBody)
         {
@@ -137,10 +132,10 @@ public sealed class SnakeBehaviour : Plugin
         SnakeBody.Clear();
         ScoreChanged?.Invoke(this, SnakeBody.Count);
 
-        SnakeFood.SetPosition(SnakeGameConfig.RandomCell(), true);
+        SnakeFood.SetTranslation(SnakeGameConfig.RandomCell());
         while (SnakeHead.CollidesWith(SnakeFood))
         {
-            SnakeFood.SetPosition(SnakeGameConfig.RandomCell(), true);
+            SnakeFood.SetTranslation(SnakeGameConfig.RandomCell());
         }
     }
 
@@ -168,11 +163,10 @@ public sealed class SnakeBehaviour : Plugin
         var lastSnakeComponent = SnakeBody.Count > 0 ? SnakeBody.Last() : SnakeHead;
 
         var snakeBodyComponent =
-            new SnakeBodyComponent(Polygon.Create(lastSnakeComponent.Polygon.Vertices.Vertices.ToArray()));
-        snakeBodyComponent.FillColor = Color.LightSlateGray;
-        snakeBodyComponent.BorderColor = Color.DarkSlateGray;
-        snakeBodyComponent.Translate(
-            SnakeGameConfig.GetMovement(SnakeGameConfig.Reverse(snakeBodyComponent.Direction)));
+            new SnakeBodyComponent(lastSnakeComponent.Polygon.Copy());
+
+        var cell = SnakeGameConfig.GetMovement(SnakeGameConfig.Reverse(snakeBodyComponent.Direction));
+        snakeBodyComponent.TranslationMatrix = lastSnakeComponent.TranslationMatrix * Matrix3x2.CreateTranslation(cell);
 
         SnakeBody.Add(snakeBodyComponent);
         Scene.Add(snakeBodyComponent);
@@ -180,13 +174,10 @@ public sealed class SnakeBehaviour : Plugin
 
     private void MoveFood()
     {
-        var foodPosition = SnakeGameConfig.RandomCell() + new Vector2(2, 2);
-        SnakeFood.Primitive.SetPosition(foodPosition);
-        SnakeFood.SetPosition(SnakeGameConfig.RandomCell(), true);
+        SnakeFood.SetTranslation(SnakeGameConfig.RandomCell());
         while (SnakeHead.CollidesWith(SnakeFood) || SnakeBody.Any(b => b.CollidesWith(SnakeFood)))
         {
-            foodPosition = SnakeGameConfig.RandomCell() + new Vector2(2, 2);
-            SnakeFood.Primitive.SetPosition(foodPosition);
+            SnakeFood.SetTranslation(SnakeGameConfig.RandomCell());
         }
     }
 

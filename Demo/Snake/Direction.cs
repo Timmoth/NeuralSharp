@@ -1,4 +1,4 @@
-﻿namespace Snake.States;
+﻿namespace Demo.Snake;
 
 public enum Direction
 {

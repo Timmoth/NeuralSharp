@@ -2,18 +2,26 @@
 using System.Runtime.CompilerServices;
 using Aptacode.AppFramework;
 using Aptacode.AppFramework.Plugins;
+using Demo.Snake;
 using NeuralSharp;
 using NeuralSharp.Activation;
-using Snake.States;
 
 namespace Snake.Behaviours;
 
 public class SnakeAIControl : Plugin
 {
+    #region Properties
     public static string BehaviourName = "SnakeAIControl";
 
+    private readonly IActivationFunction _activationFunction;
+
+    private readonly NeuralNetwork _neuralNetwork;
+
     private SnakeBehaviour _snakeBehaviour;
+
     private readonly float[] vision = new float[24];
+
+    #endregion
 
     public SnakeAIControl(Scene scene, IActivationFunction activationFunction, NeuralNetwork neuralNetwork) :
         base(scene)
@@ -43,14 +51,6 @@ public class SnakeAIControl : Plugin
     {
         return BehaviourName;
     }
-
-    #region Dependencies
-
-    private readonly IActivationFunction _activationFunction;
-
-    private readonly NeuralNetwork _neuralNetwork;
-
-    #endregion
 
     #region Vision
 
@@ -103,7 +103,7 @@ public class SnakeAIControl : Plugin
         var foodFound = false;
         var bodyFound = false;
         // Food / body cannot be ontop of current position
-        var pos = _snakeBehaviour.SnakeHead.Primitive.BoundingRectangle.Center + direction;
+        var pos = _snakeBehaviour.SnakeHead.TransformedPrimitive.GetCentroid() + direction;
         var distance = 1; // min distance = 1
 
         while (!WallCollide(pos))

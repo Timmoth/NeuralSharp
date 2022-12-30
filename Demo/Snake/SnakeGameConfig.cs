@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using Snake.States;
+using Demo.Snake;
 
 namespace Snake;
 
@@ -10,6 +10,7 @@ public static class SnakeGameConfig
     public static readonly Random _rand = new();
     public static readonly Vector2 BoardSize = new(600, 600);
     public static readonly Vector2 CellSize = new(25, 25);
+    public static readonly Vector2 InnerCellSize = new(20, 20);
 
     public static readonly Vector2 CenterCell = new(CellSize.X * HorizontalCells / 2, CellSize.Y * VerticalCells / 2);
 
